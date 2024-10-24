@@ -10,13 +10,21 @@ find_package(catkin REQUIRED COMPONENTS
   move_base_msgs
   tf
   zoo_bringup
+  cv_bridge
+  dynamic_reconfigure
+)
+
+find_package(OpenCV REQUIRED)
+
+generate_dynamic_reconfigure_options(
+  cfg/params_color.cfg
 )
 
 catkin_package(
   CATKIN_DEPENDS 
 )
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 
 add_executable(movebase_client src/movebase_client.cpp)
 target_link_libraries(movebase_client ${catkin_LIBRARIES})
@@ -29,3 +37,6 @@ target_link_libraries(arm_grab_node ${catkin_LIBRARIES})
 
 add_executable(arm_put_node src/arm_put.cpp)
 target_link_libraries(arm_put_node ${catkin_LIBRARIES})
+
+add_executable(color_detect src/color_detect.cpp)
+target_link_libraries(color_detect ${catkin_LIBRARIES} ${OpenCV_LIBS})
