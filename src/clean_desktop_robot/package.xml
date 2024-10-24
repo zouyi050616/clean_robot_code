@@ -18,6 +18,7 @@
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>move_base_msgs</build_depend>
   <build_depend>tf</build_depend>
+  <build_depend>zoo_bringup</build_depend>
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
@@ -26,6 +27,7 @@
   <build_export_depend>actionlib_msgs</build_export_depend>
   <build_export_depend>move_base_msgs</build_export_depend>
   <build_export_depend>tf</build_export_depend>
+  <build_export_depend>zoo_bringup</build_export_depend>
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
@@ -34,6 +36,7 @@
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>move_base_msgs</exec_depend>
   <exec_depend>tf</exec_depend>
+  <exec_depend>zoo_bringup</exec_depend>
 
   <export>
   </export>
