@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
-  CATKIN_DEPENDS actionlib actionlib_msgs move_base_msgs upros_core_move
+  CATKIN_DEPENDS 
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})

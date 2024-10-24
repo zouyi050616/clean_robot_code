@@ -2,6 +2,10 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <iostream>
+#include <tf2/LinearMath/Quaternion.h>
+#include <iostream>
+#include <cmath>
+
 using namespace std;
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -19,17 +23,21 @@ int main(int argc, char **argv)
     move_base_msgs::MoveBaseGoal goal3;
 
     // 待发送的 目标点 在 map 坐标系下的坐标位置
-    goal1.target_pose.pose.position.x = 2.0;
+    goal1.target_pose.pose.position.x = 1.0;
     goal1.target_pose.pose.position.y = 0.3;
     goal1.target_pose.pose.orientation.z = 0.0;
     goal1.target_pose.pose.orientation.w = 1.0;
     goal1.target_pose.header.frame_id = "map";
     goal1.target_pose.header.stamp = ros::Time::now();
 
-    goal2.target_pose.pose.position.x = 2.3;
-    goal2.target_pose.pose.position.y = 2.3;
-    goal2.target_pose.pose.orientation.z = 0.0;
-    goal2.target_pose.pose.orientation.w = 1.0;
+    double yaw = 180.0 * M_PI / 180.0;
+    tf2::Quaternion quaternion;
+    quaternion.setRPY(0, 0, yaw);
+
+    goal2.target_pose.pose.position.x = 1.5;
+    goal2.target_pose.pose.position.y = 0.3;
+    goal2.target_pose.pose.orientation.z = quaternion.getZ();
+    goal2.target_pose.pose.orientation.w = quaternion.getW();
     goal2.target_pose.header.frame_id = "map";
     goal2.target_pose.header.stamp = ros::Time::now();
 
