@@ -54,7 +54,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            for (double x = width - step ; x >= 0; x -= step)
+            for (double x = width - step; x >= 0; x -= step)
             {
                 geometry_msgs::PoseStamped pose;
                 pose.header = path.header;

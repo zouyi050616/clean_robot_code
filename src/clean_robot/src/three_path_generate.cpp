@@ -113,7 +113,7 @@ int main(int argc, char **argv)
     {
         path_1_pub.publish(path_1);
         path_2_pub.publish(path_2);
-        path_3_pub.publish(path_3);        
+        path_3_pub.publish(path_3);
         ros::spinOnce();
         loop_rate.sleep();
     }
