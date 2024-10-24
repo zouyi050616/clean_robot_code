@@ -54,6 +54,14 @@ int main(int argc, char **argv)
         ros::Duration(0.05).sleep();
     }
 
+    for (int i=0; i<20; i++)
+    {
+        cmd_vel.linear.y = 0.0;
+        cmd_pub_.publish(cmd_vel);
+        ros::spinOnce();
+        ros::Duration(0.05).sleep();        
+    }
+
     // 平移完成，开始抓取
     UPROS_ARM arm;
 
@@ -81,7 +89,9 @@ int main(int argc, char **argv)
 
     sleep(3.0);
 
-    ros::spin();
+    arm.go_home();
+
+    ros::shutdown();
 
     return 0;
 }
