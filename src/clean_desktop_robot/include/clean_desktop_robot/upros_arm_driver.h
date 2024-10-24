@@ -78,6 +78,13 @@ public:
             single_servo.Rotation_Speed = 50;
             single_servo.Target_position_Angle = 0 + servo_bias_[i];
             multiple_servo.servo_gather.push_back(single_servo);
+            if(i == 4){
+                single_servo.Target_position_Angle = 0;
+            }
+            if(i == 5){
+                single_servo.Target_position_Angle = -400;
+            }
+            multiple_servo.servo_gather.push_back(single_servo);
         }
         multiple_joint_pub_.publish(multiple_servo);
     }
@@ -224,17 +231,12 @@ public:
             zoo_bringup::SingleServo single_servo;
             single_servo.ID = i + 1;
             single_servo.Rotation_Speed = 50;
-            if (i >= 0 && i <= 3)
-            {
-                single_servo.Target_position_Angle = servo_angle[i] + servo_bias_[i];
+            single_servo.Target_position_Angle = servo_angle[i] + servo_bias_[i];
+            if(i == 4){
+                single_servo.Target_position_Angle = 0;
             }
-            if (i == 4)
-            {
-                single_servo.Target_position_Angle = current_wrist_angle;
-            }
-            if (i == 5)
-            {
-                single_servo.Target_position_Angle = current_claw_angle;
+            if(i == 5){
+                single_servo.Target_position_Angle = 580;
             }
             multiple_servo.servo_gather.push_back(single_servo);
         }

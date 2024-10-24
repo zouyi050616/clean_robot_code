@@ -22,21 +22,26 @@ int main(int argc, char **argv)
 
     UPROS_ARM arm;
 
+    sleep(3.0);
+
+    arm.claw_open(); //先打开夹爪
+
     ros::NodeHandle nh;
 
     tf2_ros::Buffer buffer;
     tf2_ros::TransformListener listener(buffer);
     ROS_INFO("tf coordinate transformaing....");
 
-    arm.claw_open(); //先打开夹爪
-
     // 获取tag到机械臂基坐标的坐标变换
-    geometry_msgs::TransformStamped tfs_1 = buffer.lookupTransform("arm_base_link", "tag_3", ros::Time(0), ros::Duration(100));
+    geometry_msgs::TransformStamped tfs_1 = buffer.lookupTransform("arm_base_link", "tag_3", ros::Time(0), ros::Duration(100.0));
+
 
     // 单位转换
     int x = -int(tfs_1.transform.translation.y * 1000);
     int y = int(tfs_1.transform.translation.x * 1000);
     int z = int(tfs_1.transform.translation.z * 1000);
+
+    ROS_INFO("Find Tag x: %d, y: %d, z: %d ;", x, y, z);
 
     // 逆运算
     if (arm.inverseFind(x, y, z))
@@ -44,18 +49,23 @@ int main(int argc, char **argv)
         ROS_INFO("Find Soulition!!!!");
     }
 
-    sleep(1.0);
+    sleep(3.0);
 
     // 逆运动学规划
     arm.inverseMove();
 
-    sleep(1.0);
+    sleep(3.0);
 
     //关闭夹爪
     arm.claw_close(); 
 
-    sleep(1.0);
+    sleep(3.0);
     
+    //回到零位
+    arm.go_home();
+
+    sleep(3.0);
+
     //回到零位
     arm.go_home();
 

@@ -7,7 +7,7 @@
 bool got_finish = false;
 
 double start_y = 0.0;
-double target_y = 0.6;
+double target_y = 0.4;
 
 double odom_distance = 0;
 
@@ -71,13 +71,15 @@ int main(int argc, char **argv)
         ROS_ERROR("Cant Find Soulition!!!!");
     }
 
-    sleep(1.0);
+    sleep(2.0);
 
     arm.inverseMove(); // 逆运算规划与控制
 
-    sleep(1.0);
+    sleep(3.0);
 
     arm.claw_open(); // 打开夹爪
+
+    sleep(3.0);
 
     ros::spin();
 
