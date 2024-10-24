@@ -77,7 +77,6 @@ public:
             single_servo.ID = i + 1;
             single_servo.Rotation_Speed = 50;
             single_servo.Target_position_Angle = 0 + servo_bias_[i];
-            multiple_servo.servo_gather.push_back(single_servo);
             if(i == 4){
                 single_servo.Target_position_Angle = 0;
             }
