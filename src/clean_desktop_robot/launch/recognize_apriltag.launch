@@ -1,6 +1,4 @@
 <launch>
-    <node pkg="tf" type="static_transform_publisher" name="base_to_camera" args="0.08 0.0 0.03 0 0 0 arm_base_link camera_link 100" />
-
     <!-- Start Apriltag ROS -->
     <arg name="launch_prefix" default=""/>
     <arg name="node_namespace" default="apriltag_ros_continuous_node"/>
