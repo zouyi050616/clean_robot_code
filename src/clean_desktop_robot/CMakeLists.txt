@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   zoo_bringup
   cv_bridge
+  upros_core_move
   dynamic_reconfigure
 )
 
@@ -37,6 +38,9 @@ target_link_libraries(arm_grab_node ${catkin_LIBRARIES})
 
 add_executable(arm_put_node src/arm_put.cpp)
 target_link_libraries(arm_put_node ${catkin_LIBRARIES})
+
+add_executable(move_core_node src/move_core.cpp)
+target_link_libraries(move_core_node ${catkin_LIBRARIES})
 
 add_executable(color_detect src/color_detect.cpp)
 target_link_libraries(color_detect ${catkin_LIBRARIES} ${OpenCV_LIBS})
