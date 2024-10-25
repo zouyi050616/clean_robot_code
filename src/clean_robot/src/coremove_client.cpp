@@ -24,8 +24,8 @@ int main(int argc, char **argv)
     CoreMoveClient cc("core_move", true);
 
     cc.waitForServer();
-    
-    //弓字型路径的起始点
+
+    // 弓字型路径的起始点
     double start_x = 2.0;
     double start_y = 0.3;
 
@@ -117,6 +117,24 @@ int main(int argc, char **argv)
             ROS_WARN("The Goal Planning Failed for some reason");
         }
         ROS_INFO("Goal reached %d of %d points", i, path.poses.size());
+    }
+
+    goal3.target_pose.pose.position.x = 0.0;
+    goal3.target_pose.pose.position.y = 0.0;
+    goal3.target_pose.pose.orientation.z = 0.0;
+    goal3.target_pose.pose.orientation.w = 1.0;
+    goal3.target_pose.header.frame_id = "map";
+    goal3.target_pose.header.stamp = ros::Time::now();
+    ac.sendGoal(goal3);
+    ROS_INFO("Send Goal Home !!!");
+    ac.waitForResult();
+    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("Back !!!!");
+    }
+    else
+    {
+        ROS_WARN("The Goal Planning Failed for some reason");
     }
 
     return 0;

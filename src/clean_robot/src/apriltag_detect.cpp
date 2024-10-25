@@ -113,5 +113,24 @@ int main(int argc, char **argv)
         }
     }
 
+    move_base_msgs::MoveBaseGoal goal4; //home
+    goal4.target_pose.pose.position.x = 0.0;
+    goal4.target_pose.pose.position.y = 0.0;
+    goal4.target_pose.pose.orientation.z = 0.0;
+    goal4.target_pose.pose.orientation.w = 1.0;
+    goal4.target_pose.header.frame_id = "map";
+    goal4.target_pose.header.stamp = ros::Time::now();
+    ac.sendGoal(goal4);
+    ROS_INFO("Send Goal  Home !!!");
+    ac.waitForResult();
+    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("The Goal 3 Reached Successfully!!!");
+    }
+    else
+    {
+        ROS_WARN("The Goal Planning Failed for some reason");
+    }
+
     return 0;
 }
