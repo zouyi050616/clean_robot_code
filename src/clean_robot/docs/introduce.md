@@ -17,3 +17,4 @@
 - three_path_generate：在比赛地图上三块矩形区域中，生成弓字型路径全覆盖示例；
 - movebase_client：航点调度示例，到达每块清扫区域起点，返回出发点的示例；
 - coremove_client：弓字型清扫示例，调用coremove，完成路径清扫；
+- apriltag_detect: 导航到某一个点，识别apriltag确定清扫区域，id为1去往某个点，id为2去到另一个点

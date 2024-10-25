@@ -24,9 +24,10 @@ int main(int argc, char **argv)
     CoreMoveClient cc("core_move", true);
 
     cc.waitForServer();
-
-    double start_x_2 = 2.0;
-    double start_y_2 = 0.3;
+    
+    //弓字型路径的起始点
+    double start_x = 2.0;
+    double start_y = 0.3;
 
     // 路径生成
 
@@ -47,8 +48,8 @@ int main(int argc, char **argv)
             {
                 geometry_msgs::PoseStamped pose;
                 pose.header = path.header;
-                pose.pose.position.x = x + start_x_2;
-                pose.pose.position.y = y + start_y_2;
+                pose.pose.position.x = x + start_x;
+                pose.pose.position.y = y + start_y;
                 path.poses.push_back(pose);
             }
         }
@@ -58,8 +59,8 @@ int main(int argc, char **argv)
             {
                 geometry_msgs::PoseStamped pose;
                 pose.header = path.header;
-                pose.pose.position.x = x + start_x_2;
-                pose.pose.position.y = y + start_y_2;
+                pose.pose.position.x = x + start_x;
+                pose.pose.position.y = y + start_y;
                 path.poses.push_back(pose);
             }
         }
@@ -72,21 +73,21 @@ int main(int argc, char **argv)
     move_base_msgs::MoveBaseGoal goal3;
 
     // 待发送的 目标点 在 map 坐标系下的坐标位置
-    goal1.target_pose.pose.position.x = 2.0;
-    goal1.target_pose.pose.position.y = 0.3;
+    goal1.target_pose.pose.position.x = start_x;
+    goal1.target_pose.pose.position.y = start_y;
     goal1.target_pose.pose.orientation.z = 0.0;
     goal1.target_pose.pose.orientation.w = 1.0;
     goal1.target_pose.header.frame_id = "map";
     goal1.target_pose.header.stamp = ros::Time::now();
 
     ac.sendGoal(goal1);
-    ROS_INFO("Send Goal  1 !!!");
+    ROS_INFO("Send Goal Movebase !!!");
 
     ac.waitForResult();
 
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
-        ROS_INFO("The Goal 1 Reached Successfully!!!");
+        ROS_INFO("The MoveBase Goal Reached Successfully!!!");
     }
     else
     {

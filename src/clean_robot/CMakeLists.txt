@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   move_base_msgs
+  apriltag_ros
   upros_core_move
 )
 
@@ -28,3 +29,6 @@ target_link_libraries(move_base_client ${catkin_LIBRARIES})
 
 add_executable(core_move_client src/coremove_client.cpp)
 target_link_libraries(core_move_client ${catkin_LIBRARIES})
+
+add_executable(apriltag_detect src/apriltag_detect.cpp)
+target_link_libraries(apriltag_detect ${catkin_LIBRARIES})
