@@ -68,6 +68,7 @@ public:
         single_joint_pub_.publish(single_servo);
     }
 
+    //回到零位，夹爪闭合
     void go_home()
     {
         zoo_bringup::MultipleServo multiple_servo;
@@ -222,7 +223,8 @@ public:
         return flag;
     }
 
-    void inverseMove()
+    //基于逆运算运动去抓取，需要夹爪保持张开
+    void inverseMoveToGrab()
     {
         zoo_bringup::MultipleServo multiple_servo;
         for (int i = 0; i < 6; i++)
@@ -241,6 +243,27 @@ public:
         }
         multiple_joint_pub_.publish(multiple_servo);
     }
+
+    //基于逆运算运动去放置，需要夹爪保持闭合
+    void inverseMoveToPut()
+    {
+        zoo_bringup::MultipleServo multiple_servo;
+        for (int i = 0; i < 6; i++)
+        {
+            zoo_bringup::SingleServo single_servo;
+            single_servo.ID = i + 1;
+            single_servo.Rotation_Speed = 50;
+            single_servo.Target_position_Angle = servo_angle[i] + servo_bias_[i];
+            if(i == 4){
+                single_servo.Target_position_Angle = 0;
+            }
+            if(i == 5){
+                single_servo.Target_position_Angle = -400;
+            }
+            multiple_servo.servo_gather.push_back(single_servo);
+        }
+        multiple_joint_pub_.publish(multiple_servo);
+    }   
 };
 
 #endif

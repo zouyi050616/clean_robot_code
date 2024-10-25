@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     sleep(3.0);
 
     // 逆运动学规划
-    arm.inverseMove();
+    arm.inverseMoveToGrab();
 
     sleep(3.0);
 

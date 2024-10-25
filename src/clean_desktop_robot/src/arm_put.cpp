@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 
     sleep(2.0);
 
-    arm.inverseMove(); // 逆运算规划与控制
+    arm.inverseMoveToPut(); // 逆运算规划与控制
 
     sleep(3.0);
 
@@ -90,6 +90,12 @@ int main(int argc, char **argv)
     sleep(3.0);
 
     arm.go_home();
+
+    sleep(3.0);
+
+    arm.go_home();
+
+    sleep(3.0);
 
     ros::shutdown();
 
