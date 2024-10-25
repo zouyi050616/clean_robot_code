@@ -24,17 +24,10 @@ int main(int argc, char **argv)
     CoreMoveClient cc("core_move", true);
 
     cc.waitForServer();
-<<<<<<< HEAD
-
-    // 弓字型路径的起始点
-    double start_x = 2.0;
-    double start_y = 0.3;
-=======
     
     //弓字型路径的起始点
     double start_x = 1.5;
     double start_y = -1.0;
->>>>>>> 51fedb57b1c5c3e85ebc569803981513689e1872
 
     // 路径生成
 
