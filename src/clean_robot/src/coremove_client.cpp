@@ -26,8 +26,8 @@ int main(int argc, char **argv)
     cc.waitForServer();
     
     //弓字型路径的起始点
-    double start_x = 2.0;
-    double start_y = 0.3;
+    double start_x = 1.5;
+    double start_y = -1.0;
 
     // 路径生成
 
