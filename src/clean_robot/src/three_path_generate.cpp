@@ -2,6 +2,7 @@
 #include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
 
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "three_path_generate");

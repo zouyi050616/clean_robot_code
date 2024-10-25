@@ -96,7 +96,7 @@ int main(int argc, char **argv)
         sleep(3.0);
 
         // 开启放置
-        system("roslaucnh clean_desktop_robot arm_put.launch");
+        system("roslaunch clean_desktop_robot arm_put.launch");
 
         sleep(3.0);
     }
