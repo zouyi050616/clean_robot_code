@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     cc.waitForServer();
 
     double start_x = 1.0; // movebase目标点x
-    double start_y = 0.3; // movebase目标点y
+    double start_y = -0.3; // movebase目标点y
 
     move_base_msgs::MoveBaseGoal goal;
 
@@ -50,9 +50,29 @@ int main(int argc, char **argv)
         ROS_WARN("The MoveBase Goal Planning Failed for some reason");
     }
 
+    ros::Duration(2.0).sleep();
+
     upros_core_move::CoreMoveGoal goal_core;
     goal_core.cmd = 1;
-    goal_core.target_pose.pose.position.x = start_x + 0.5;
+    goal_core.target_pose.pose.position.x = start_x + 0.3;
+    goal_core.target_pose.pose.position.y = start_y;
+
+    cc.sendGoal(goal_core);
+
+    ROS_INFO("CoreMove Send Goal !!!");
+
+    cc.waitForResult();
+
+    if (cc.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("The CoreMove Goal Reached Successfully!!!");
+    }
+    else
+    {
+        ROS_WARN("The CoreMove Goal Planning Failed for some reason");
+    }
+
+    goal_core.target_pose.pose.position.x = start_x + 0.6;
     goal_core.target_pose.pose.position.y = start_y;
 
     cc.sendGoal(goal_core);

@@ -7,7 +7,7 @@
 bool got_finish = false;
 
 double start_y = 0.0;
-double target_y = 0.4;
+double target_y = -0.4;
 
 double odom_distance = 0;
 
@@ -18,7 +18,7 @@ void odom_callback(const nav_msgs::OdometryConstPtr &odom_msg)
     {
         start_y = current_y;
     }
-    if (current_y - start_y >= target_y)
+    if (current_y - start_y <= target_y)
     {
         got_finish = true;
         ROS_INFO("Finish!!!!!!!!");
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     // 先平移0.6米
     while (ros::ok() && !got_finish)
     {
-        cmd_vel.linear.y = 0.15;
+        cmd_vel.linear.y = -0.15;
         cmd_pub_.publish(cmd_vel);
         ros::spinOnce();
         ros::Duration(0.05).sleep();
