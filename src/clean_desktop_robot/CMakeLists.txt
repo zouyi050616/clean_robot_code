@@ -42,5 +42,8 @@ target_link_libraries(arm_put_node ${catkin_LIBRARIES})
 add_executable(move_core_node src/move_core.cpp)
 target_link_libraries(move_core_node ${catkin_LIBRARIES})
 
+add_executable(task_flow_node src/task_flow.cpp)
+target_link_libraries(task_flow_node ${catkin_LIBRARIES})
+
 add_executable(color_detect src/color_detect.cpp)
 target_link_libraries(color_detect ${catkin_LIBRARIES} ${OpenCV_LIBS})

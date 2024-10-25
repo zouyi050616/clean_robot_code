@@ -54,6 +54,9 @@ int main(int argc, char **argv)
     // 逆运动学规划
     arm.inverseMoveToGrab();
 
+    sleep(1.0);
+    arm.inverseMoveToGrab();    
+
     sleep(3.0);
 
     //关闭夹爪

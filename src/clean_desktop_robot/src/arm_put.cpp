@@ -83,6 +83,10 @@ int main(int argc, char **argv)
 
     arm.inverseMoveToPut(); // 逆运算规划与控制
 
+    sleep(2.0);
+
+    arm.inverseMoveToPut(); // 逆运算规划与控制
+    
     sleep(3.0);
 
     arm.claw_open(); // 打开夹爪
