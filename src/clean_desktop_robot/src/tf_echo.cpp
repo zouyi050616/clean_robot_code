@@ -22,7 +22,7 @@ int main(int argc, char **argv)
             listener.lookupTransform("map", "base_link", ros::Time(0), transform); // 获取base_link在map坐标系下的变换
         }
         catch (tf::TransformException ex)
-        {                              
+        {
             ros::Duration(1.0).sleep(); // 如果获取变换失败，打印错误信ROS_ERROR("%s",ex.what()),等待1秒再继续continue;
         }
 
