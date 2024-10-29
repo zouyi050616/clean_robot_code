@@ -68,8 +68,9 @@ int main(int argc, char **argv)
 
     path_pub.publish(path);
 
+    //弓字型路径的起始点
     move_base_msgs::MoveBaseGoal goal1;
-    move_base_msgs::MoveBaseGoal goal2;
+    //返回的出发点
     move_base_msgs::MoveBaseGoal goal3;
 
     // 待发送的 目标点 在 map 坐标系下的坐标位置

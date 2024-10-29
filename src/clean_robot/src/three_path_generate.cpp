@@ -12,9 +12,9 @@ int main(int argc, char **argv)
     ros::Publisher path_2_pub = nh.advertise<nav_msgs::Path>("path_2", 10);
     ros::Publisher path_3_pub = nh.advertise<nav_msgs::Path>("path_3", 10);
 
-    double step = 0.2;
-    double width = 0.6;
-    double height = 0.6;
+    double step = 0.1;
+    double width = 0.5;
+    double height = 0.5;
 
     double start_x_1 = 0.3;
     double start_y_1 = 2.0;
