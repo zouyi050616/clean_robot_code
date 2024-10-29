@@ -5,6 +5,8 @@
 #include <iostream>
 
 #include <nav_msgs/Path.h>
+#include <geometry_msgs/Quaternion.h>
+#include <tf2/LinearMath/Quaternion.h>
 
 using namespace std;
 
@@ -72,15 +74,38 @@ int main(int argc, char **argv)
     move_base_msgs::MoveBaseGoal goal2;
     move_base_msgs::MoveBaseGoal goal3;
 
-    // 待发送的 目标点 在 map 坐标系下的坐标位置
-    goal1.target_pose.pose.position.x = start_x;
-    goal1.target_pose.pose.position.y = start_y;
-    goal1.target_pose.pose.orientation.z = 0.0;
-    goal1.target_pose.pose.orientation.w = 1.0;
+    tf2::Quaternion quaternion;
+    quaternion.setRPY(0, 0, -1.5707);  
+
+    goal1.target_pose.pose.position.x = 0.5;
+    goal1.target_pose.pose.position.y = 0.0;
+    goal1.target_pose.pose.orientation.z = quaternion.z();
+    goal1.target_pose.pose.orientation.w = quaternion.w();
     goal1.target_pose.header.frame_id = "map";
     goal1.target_pose.header.stamp = ros::Time::now();
-
     ac.sendGoal(goal1);
+    ROS_INFO("Send Goal  1 !!!");
+
+    ac.waitForResult();
+
+    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("The Goal 1 Reached Successfully!!!");
+    }
+    else
+    {
+        ROS_WARN("The Goal Planning Failed for some reason");
+    }
+
+    // 待发送的 目标点 在 map 坐标系下的坐标位置
+    goal2.target_pose.pose.position.x = start_x;
+    goal2.target_pose.pose.position.y = start_y;
+    goal2.target_pose.pose.orientation.z = 0.0;
+    goal2.target_pose.pose.orientation.w = 1.0;
+    goal2.target_pose.header.frame_id = "map";
+    goal2.target_pose.header.stamp = ros::Time::now();
+
+    ac.sendGoal(goal2);
     ROS_INFO("Send Goal Movebase !!!");
 
     ac.waitForResult();
@@ -117,6 +142,27 @@ int main(int argc, char **argv)
             ROS_WARN("The Goal Planning Failed for some reason");
         }
         ROS_INFO("Goal reached %d of %d points", i, path.poses.size());
+    }
+
+    goal3.target_pose.pose.position.x = 0.0;
+    goal3.target_pose.pose.position.y = 0.0;
+    goal3.target_pose.pose.orientation.z = 0.0;
+    goal3.target_pose.pose.orientation.w = 1.0;
+    goal3.target_pose.header.frame_id = "map";
+    goal3.target_pose.header.stamp = ros::Time::now();
+
+    ac.sendGoal(goal3);
+    ROS_INFO("Send Goal  3 !!!");
+
+    ac.waitForResult();
+
+    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("The Goal 1 Reached Successfully!!!");
+    }
+    else
+    {
+        ROS_WARN("The Goal Planning Failed for some reason");
     }
 
     return 0;

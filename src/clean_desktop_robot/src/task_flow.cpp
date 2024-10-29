@@ -27,8 +27,8 @@ int main(int argc, char **argv)
 
     cc.waitForServer();
 
-    double start_x = 1.0;  // movebase目标点x
-    double start_y = -0.3; // movebase目标点y
+    double start_x = 1.15;  // movebase目标点x
+    double start_y = -0.2; // movebase目标点y
 
     move_base_msgs::MoveBaseGoal goal;
 
