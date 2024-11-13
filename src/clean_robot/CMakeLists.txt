@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   upros_core_move
 )
 
+find_package(OpenCV REQUIRED)
+
 catkin_package(
   CATKIN_DEPENDS 
 )
@@ -32,3 +34,9 @@ target_link_libraries(core_move_client ${catkin_LIBRARIES})
 
 add_executable(apriltag_detect src/apriltag_detect.cpp)
 target_link_libraries(apriltag_detect ${catkin_LIBRARIES})
+
+add_executable(area_path_node src/AreaPathNode.cpp src/AreaPath.cpp)
+target_link_libraries(area_path_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
+
+add_executable(next_goal src/next_goal.cpp)
+target_link_libraries(next_goal ${catkin_LIBRARIES})

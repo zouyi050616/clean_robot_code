@@ -70,8 +70,10 @@ int main(int argc, char **argv)
 
     path_pub.publish(path);
 
-    //弓字型路径的起始点
+    //视觉识别的点
     move_base_msgs::MoveBaseGoal goal1;
+    //弓字型路径的起始点
+    move_base_msgs::MoveBaseGoal goal2;
     //返回的出发点
     move_base_msgs::MoveBaseGoal goal3;
 
@@ -151,24 +153,12 @@ int main(int argc, char **argv)
     goal3.target_pose.pose.orientation.w = 1.0;
     goal3.target_pose.header.frame_id = "map";
     goal3.target_pose.header.stamp = ros::Time::now();
-<<<<<<< HEAD
-
-    ac.sendGoal(goal3);
-    ROS_INFO("Send Goal  3 !!!");
-
-    ac.waitForResult();
-
-    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    {
-        ROS_INFO("The Goal 1 Reached Successfully!!!");
-=======
     ac.sendGoal(goal3);
     ROS_INFO("Send Goal Home !!!");
     ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         ROS_INFO("Back !!!!");
->>>>>>> f159bd4eac09d7b164df940fdd77d44c6cf9e9fa
     }
     else
     {

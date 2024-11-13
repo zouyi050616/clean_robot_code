@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="clean_robot" type="area_path_node" name="area_path_node" output="screen" >
+        <rosparam file="$(find clean_robot)/config/area_path_params.yaml" command="load" />
+        <rosparam file="$(find clean_robot)/config/set_area.yaml" command="load" />
+    </node>
+</launch>
