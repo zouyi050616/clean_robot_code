@@ -72,6 +72,41 @@ int main(int argc, char **argv)
     //回到零位
     arm.go_home();
 
+    //去往放置小盒子
+    x = 110;
+    y = 140;
+    z = 95;
+    if (arm.inverseFind(x, y, z))
+    {
+        ROS_INFO("Find Soulition!!!!");
+    }
+    else
+    {
+        ROS_ERROR("Cant Find Soulition!!!!");
+    }
+
+    sleep(2.0);
+
+    arm.inverseMoveToPut(); // 逆运算规划与控制
+
+    sleep(2.0);
+
+    arm.inverseMoveToPut(); // 逆运算规划与控制
+    
+    sleep(3.0);
+
+    arm.claw_open(); // 打开夹爪
+
+    sleep(3.0);
+
+    arm.go_home();
+
+    sleep(3.0);
+
+    arm.go_home();
+
+    sleep(3.0);
+
     ros::shutdown();
 
     return 0;
