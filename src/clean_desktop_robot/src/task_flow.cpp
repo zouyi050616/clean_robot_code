@@ -7,6 +7,7 @@
 #include <geometry_msgs/Quaternion.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <nav_msgs/Path.h>
+#include <geometry_msgs/Twist.h>
 
 using namespace std;
 
@@ -23,6 +24,8 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "send_goals_node");
     ros::NodeHandle nh;
 
+    ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
+
     MoveBaseClient ac("move_base", true);
 
     ac.waitForServer();
@@ -32,15 +35,15 @@ int main(int argc, char **argv)
     cc.waitForServer();
 
     double start_x = 1.78;  // movebase目标点x
-    double start_y = -0.20; // movebase目标点y
+    double start_y = -0.15; // movebase目标点y
     tf2::Quaternion quaternion;
-    quaternion.setRPY(0, 0, 1.5707);  
+    quaternion.setRPY(0, 0, 1.5707);
 
     move_base_msgs::MoveBaseGoal goal;
 
     // 发送抓取导航点,先去引导点
     goal.target_pose.pose.position.x = start_x;
-    goal.target_pose.pose.position.y = start_y-0.6;
+    goal.target_pose.pose.position.y = start_y - 0.6;
     goal.target_pose.pose.orientation.z = quaternion.z();
     goal.target_pose.pose.orientation.w = quaternion.w();
     goal.target_pose.header.frame_id = "map";
@@ -70,8 +73,25 @@ int main(int argc, char **argv)
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         ROS_INFO("The MoveBase Goal Reached Successfully!!!");
-        // 开启抓取
-        system("roslaunch clean_desktop_robot arm_grab.launch");
+
+        // 直接开启抓取,智行W4A-T机械臂行程较长，用下面这个指令
+        // system("roslaunch clean_desktop_robot arm_grab.launch");
+        // 先前进一点再开启抓取，智行W4A机械臂行程较短，智行W4A用下面这个一段指令
+        // 先前进一小段,大约10cm
+        geometry_msgs::Twist vel_msg;
+        vel_msg.linear.x = 0.1;
+        int count = 0;
+        ros::Rate loop_rate(10);
+        while (ros::ok() && count < 10)
+        {
+            pub.publish(vel_msg);
+            ros::spinOnce();
+            loop_rate.sleep();
+            count++;
+        }
+        vel_msg.linear.x = 0.0;
+        pub.publish(vel_msg);
+        system("rosrun zoo_arm arm_grab_node");
     }
     else
     {
@@ -137,8 +157,8 @@ int main(int argc, char **argv)
         ROS_WARN("The MoveBase Goal Planning Failed for some reason");
     }
 
-    //然后开始全覆盖
-    //弓字型路径的起始点
+    // 然后开始全覆盖
+    // 弓字型路径的起始点
     start_x = 1.5;
     start_y = -1.0;
     // 路径生成
@@ -243,7 +263,6 @@ int main(int argc, char **argv)
     {
         ROS_WARN("The Goal Planning Failed for some reason");
     }
-
 
     return 0;
 }
