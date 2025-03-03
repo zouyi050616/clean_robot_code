@@ -5,8 +5,9 @@
 
 #### 软件架构
 
-1. clean_robot:地面清洁
-2. clean_desktop_robot:桌面清洁
+1. clean_robot:服务机器人竞技A
+2. clean_desktop_robot:服务机器人竞技B
+3. carry_robot:服务机器人竞技C
 
 
 #### 安装教程
