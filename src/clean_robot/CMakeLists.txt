@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   move_base_msgs
   apriltag_ros
-  upros_core_move
+  upros_message
 )
 
 find_package(OpenCV REQUIRED)
@@ -35,8 +35,6 @@ target_link_libraries(core_move_client ${catkin_LIBRARIES})
 add_executable(apriltag_detect src/apriltag_detect.cpp)
 target_link_libraries(apriltag_detect ${catkin_LIBRARIES})
 
-add_executable(area_path_node src/AreaPathNode.cpp src/AreaPath.cpp)
-target_link_libraries(area_path_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
+add_executable(clean_robot src/clean_robot.cpp)
+target_link_libraries(clean_robot ${catkin_LIBRARIES})
 
-add_executable(next_goal src/next_goal.cpp)
-target_link_libraries(next_goal ${catkin_LIBRARIES})

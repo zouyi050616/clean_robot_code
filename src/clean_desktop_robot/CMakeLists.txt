@@ -9,9 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   move_base_msgs
   tf
-  zoo_bringup
   cv_bridge
-  upros_core_move
+  upros_message
   dynamic_reconfigure
 )
 
@@ -33,17 +32,20 @@ target_link_libraries(movebase_client ${catkin_LIBRARIES})
 add_executable(tf_echo_node src/tf_echo.cpp)
 target_link_libraries(tf_echo_node ${catkin_LIBRARIES})
 
+add_executable(arm_grab_test_node src/arm_test.cpp)
+target_link_libraries(arm_grab_test_node ${catkin_LIBRARIES})
+
 add_executable(arm_grab_node src/arm_grab.cpp)
 target_link_libraries(arm_grab_node ${catkin_LIBRARIES})
 
 add_executable(arm_put_node src/arm_put.cpp)
 target_link_libraries(arm_put_node ${catkin_LIBRARIES})
 
-add_executable(move_core_node src/move_core.cpp)
-target_link_libraries(move_core_node ${catkin_LIBRARIES})
-
 add_executable(task_flow_node src/task_flow.cpp)
 target_link_libraries(task_flow_node ${catkin_LIBRARIES})
 
-add_executable(color_detect src/color_detect.cpp)
-target_link_libraries(color_detect ${catkin_LIBRARIES} ${OpenCV_LIBS})
+add_executable(complete_flow_node src/complete_flow.cpp)
+target_link_libraries(complete_flow_node ${catkin_LIBRARIES})
+
+# add_executable(color_detect src/color_detect.cpp)
+# target_link_libraries(color_detect ${catkin_LIBRARIES} ${OpenCV_LIBS})

@@ -28,14 +28,20 @@ int main(int argc, char **argv)
 
     ac.waitForServer();
 
-    double grab_x = 1.92;  // movebase目标点x，第一张桌子前方的导航点
-    double grab_y = -1.83; // movebase目标点y，第一张桌子前方的导航点
+    double grab_desk_x = 1.90;  // 抓取的桌子的x坐标
+    double grab_desk_y = -1.80; // 抓取的桌子的y坐标
+
+    double tag_1_put_x = 1.0; // 放置tag1的x坐标
+    double tag_1_put_y = -0.77; // 放置tag1的y坐标
+
+    // tf2::Quaternion quaternion;
+    // quaternion.setRPY(0, 0, 1.5707);
 
     move_base_msgs::MoveBaseGoal goal;
 
     // 发送抓取导航点,桌子前方一小段距离
-    goal.target_pose.pose.position.x = grab_x;
-    goal.target_pose.pose.position.y = grab_y;
+    goal.target_pose.pose.position.x = grab_desk_x;
+    goal.target_pose.pose.position.y = grab_desk_y + 0.1; // TAG1物块位置在桌子中轴线左侧10cm
     goal.target_pose.pose.orientation.z = 0.0;
     goal.target_pose.pose.orientation.w = 1.0;
     goal.target_pose.header.frame_id = "map";
@@ -45,6 +51,7 @@ int main(int argc, char **argv)
     ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
+
         ROS_INFO("The MoveBase Goal Reached Successfully!!!");
         // 先前进一小段,大约10cm
         geometry_msgs::Twist vel_msg;
@@ -61,8 +68,8 @@ int main(int argc, char **argv)
         // 停下
         vel_msg.linear.x = 0.0;
         pub.publish(vel_msg);
-        // 抓取物块
-        system("roslaunch clean_desktop_robot arm_grab.launch");
+        // 抓取TAG位1的物块
+        system("roslaunch carry_robot arm_grab_1.launch");
     }
     else
     {
@@ -86,8 +93,8 @@ int main(int argc, char **argv)
     pub.publish(vel_msg);
 
     // 发送放置导航点
-    goal.target_pose.pose.position.x = grab_x;
-    goal.target_pose.pose.position.y = grab_y - 0.4; // 放置点位于抓取点右侧约0.4米
+    goal.target_pose.pose.position.x = tag_1_put_x;
+    goal.target_pose.pose.position.y = tag_1_put_y;
     goal.target_pose.pose.orientation.z = 0.0;
     goal.target_pose.pose.orientation.w = 1.0;
     goal.target_pose.header.frame_id = "map";
@@ -98,12 +105,12 @@ int main(int argc, char **argv)
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         ROS_INFO("The MoveBase Goal Reached Successfully!!!");
-        // 先前进一小段,大约18cm
+        // 先左移一小段,大约10cm
         geometry_msgs::Twist vel_msg;
-        vel_msg.linear.x = 0.1;
+        vel_msg.linear.y = 0.1;
         int count = 0;
         ros::Rate loop_rate(10);
-        while (ros::ok() && count < 18)
+        while (ros::ok() && count < 10)
         {
             pub.publish(vel_msg);
             ros::spinOnce();
@@ -111,18 +118,18 @@ int main(int argc, char **argv)
             count++;
         }
         // 停下
-        vel_msg.linear.x = 0.0;
+        vel_msg.linear.y = 0.0;
         pub.publish(vel_msg);
         // 放置物块
-        system("roslaunch clean_desktop_robot arm_put.launch");
+        system("roslaunch carry_robot arm_put.launch");
     }
     else
     {
         ROS_WARN("The MoveBase Goal Planning Failed for some reason");
     }
 
-    // 先后退一小段,大约30cm
-    vel_msg.linear.x = -0.1;
+    // 先右移一小段,大约30cm，防止再规划碰撞
+    vel_msg.linear.y = -0.1;
     count = 0;
     while (ros::ok() && count < 30)
     {
@@ -132,7 +139,7 @@ int main(int argc, char **argv)
         count++;
     }
     // 停下
-    vel_msg.linear.x = 0.0;
+    vel_msg.linear.y = 0.0;
     pub.publish(vel_msg);
 
     // 发送返回导航点

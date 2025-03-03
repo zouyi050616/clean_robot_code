@@ -2,7 +2,6 @@
 #include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
 
-
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "three_path_generate");
@@ -16,15 +15,16 @@ int main(int argc, char **argv)
     double width = 0.5;
     double height = 0.5;
 
-    double start_x_1 = 0.3;
-    double start_y_1 = 2.0;
+    double start_x_1 = 1.1; // 路径1的起始点x坐标（矩形的右下角）
+    double start_y_1 = -0.7; // 路径1的起始点y坐标（矩形的右下角）
 
-    double start_x_2 = 2.0;
-    double start_y_2 = 0.3;
+    double start_x_2 = 1.1; // 路径2的起始点x坐标（矩形的右下角）
+    double start_y_2 = -1.7; // 路径2的起始点x坐标（矩形的右下角）
 
-    double start_x_3 = 2.3;
-    double start_y_3 = 2.3;
+    double start_x_3 = 1.1; // 路径3的起始点x坐标（矩形的右下角）
+    double start_y_3 = -2.7; // 路径3的起始点x坐标（矩形的右下角）
 
+    // 第一个矩形的路径
     nav_msgs::Path path_1;
     path_1.header.frame_id = "map";
     for (double y = 0; y < height; y += step)
@@ -53,6 +53,7 @@ int main(int argc, char **argv)
         }
     }
 
+    //第二个矩形的路径
     nav_msgs::Path path_2;
     path_2.header.frame_id = "map";
     for (double y = 0; y < height; y += step)
@@ -81,6 +82,7 @@ int main(int argc, char **argv)
         }
     }
 
+    //第三个矩形的路径
     nav_msgs::Path path_3;
     path_3.header.frame_id = "map";
     for (double y = 0; y < height; y += step)
@@ -109,6 +111,7 @@ int main(int argc, char **argv)
         }
     }
 
+    //路径发布出去
     ros::Rate loop_rate(10);
     while (ros::ok())
     {

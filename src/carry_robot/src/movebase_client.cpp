@@ -18,13 +18,22 @@ int main(int argc, char **argv)
 
     ac.waitForServer();
 
+    double grab_desk_x = 1.90; // 抓取的桌子的x坐标
+    double grab_desk_y = -1.77; // 抓取的桌子的y坐标
+
+    double tag_1_put_x = 1.0;
+    double tag_1_put_y = -0.77;
+
+    double tag_2_put_x = 1.6;
+    double tag_2_put_y = -0.77;
+
     move_base_msgs::MoveBaseGoal goal1;
     move_base_msgs::MoveBaseGoal goal2;
     move_base_msgs::MoveBaseGoal goal3;
 
-    // 待发送的 desk1 目标点 在 map 坐标系下的坐标位置
-    goal1.target_pose.pose.position.x = 1.90;
-    goal1.target_pose.pose.position.y = -1.79;
+    // 待发送的 抓取 TAG1 的目标点 在 map 坐标系下的坐标位置
+    goal1.target_pose.pose.position.x = grab_desk_x;
+    goal1.target_pose.pose.position.y = grab_desk_y + 0.1;
     goal1.target_pose.pose.orientation.z = 0.0;
     goal1.target_pose.pose.orientation.w = 1.0;
     goal1.target_pose.header.frame_id = "map";
@@ -41,9 +50,9 @@ int main(int argc, char **argv)
         ROS_WARN("The Goal Planning Failed for some reason");
     }
 
-    // 待发送的 desk2 目标点 在 map 坐标系下的坐标位置
-    goal2.target_pose.pose.position.x = 1.90;
-    goal2.target_pose.pose.position.y = -2.99;
+    // 待发送的 放置 TAG1 的目标点 在 map 坐标系下的坐标位置
+    goal2.target_pose.pose.position.x = tag_1_put_x;
+    goal2.target_pose.pose.position.y = tag_1_put_y;
     goal2.target_pose.pose.orientation.z = 0.0;
     goal2.target_pose.pose.orientation.w = 1.0;
     goal2.target_pose.header.frame_id = "map";
@@ -60,7 +69,45 @@ int main(int argc, char **argv)
         ROS_WARN("The Goal Planning Failed for some reason");
     }
 
-    // 待发送的 home 目标点 在 map 坐标系下的坐标位置
+    // 待发送的 抓取 TAG2 的目标点 在 map 坐标系下的坐标位置
+    goal1.target_pose.pose.position.x = grab_desk_x;
+    goal1.target_pose.pose.position.y = grab_desk_y - 0.1;
+    goal1.target_pose.pose.orientation.z = 0.0;
+    goal1.target_pose.pose.orientation.w = 1.0;
+    goal1.target_pose.header.frame_id = "map";
+    goal1.target_pose.header.stamp = ros::Time::now();
+    ac.sendGoal(goal1);
+    ROS_INFO("Send Goal  1 !!!");
+    ac.waitForResult();
+    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("The Goal 1 Reached Successfully!!!");
+    }
+    else
+    {
+        ROS_WARN("The Goal Planning Failed for some reason");
+    }
+
+    // 待发送的 放置 TAG1 的目标点 在 map 坐标系下的坐标位置
+    goal2.target_pose.pose.position.x = tag_2_put_x;
+    goal2.target_pose.pose.position.y = tag_2_put_y;
+    goal2.target_pose.pose.orientation.z = 0.0;
+    goal2.target_pose.pose.orientation.w = 1.0;
+    goal2.target_pose.header.frame_id = "map";
+    goal2.target_pose.header.stamp = ros::Time::now();
+    ac.sendGoal(goal2);
+    ROS_INFO("Send Goal 2 !!!");
+    ac.waitForResult();
+    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("The Goal 2 Reached Successfully!!!");
+    }
+    else
+    {
+        ROS_WARN("The Goal Planning Failed for some reason");
+    }
+
+    // 返回出发点
     goal3.target_pose.pose.position.x = 0.0;
     goal3.target_pose.pose.position.y = 0.0;
     goal3.target_pose.pose.orientation.z = 0.0;

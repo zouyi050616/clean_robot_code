@@ -16,6 +16,7 @@ int main(int argc, char **argv)
     nav_msgs::Path path;
     path.header.frame_id = "map";
 
+    // 在 0.5m * 0.5m 的矩形范围内，生成全覆盖路径
     for (double y = 0; y < height; y += step)
     {
         if ((int(y / step)) % 2 == 0)
@@ -45,6 +46,7 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(10);
     while (ros::ok())
     {
+        //将生成的路径发布出去
         path_pub.publish(path);
         ros::spinOnce();
         loop_rate.sleep();
