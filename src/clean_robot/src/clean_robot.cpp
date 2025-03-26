@@ -48,6 +48,47 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "send_goals_node");
     ros::NodeHandle nh;
 
+    double step = 0.1;
+    double width = 0.5;
+    double height = 0.5;
+
+    double view_x = 0.0;
+    double view_y = 0.0;
+
+    double start_x_1 = 1.79; // 路径1的起始点x坐标（矩形的右下角）
+    double start_y_1 = -0.02; // 路径1的起始点y坐标（矩形的右下角）
+
+    double start_x_2 = 1.72; // 路径2的起始点x坐标（矩形的右下角）
+    double start_y_2 = 1.81; // 路径2的起始点x坐标（矩形的右下角）
+
+    double start_x_3 = 0.06; // 路径3的起始点x坐标（矩形的右下角）
+    double start_y_3 = 1.67; // 路径3的起始点x坐标（矩形的右下角）
+
+    nh.getParam("/clean_robot/step", step);
+    nh.getParam("/clean_robot/width", width);
+    nh.getParam("/clean_robot/height", height);
+
+    nh.getParam("/clean_robot/view_x", view_x);
+    nh.getParam("/clean_robot/view_y", view_y);
+    
+    nh.getParam("/clean_robot/start_x_1", start_x_1);
+    nh.getParam("/clean_robot/start_y_1", start_y_1);
+    nh.getParam("/clean_robot/start_x_2", start_x_2);
+    nh.getParam("/clean_robot/start_y_2", start_y_2);
+    nh.getParam("/clean_robot/start_x_3", start_x_3);
+    nh.getParam("/clean_robot/start_y_3", start_y_3);
+
+    //测试参数是否加载
+    // ROS_INFO("Step: %f", step);
+    // ROS_INFO("Width: %f", width);
+    // ROS_INFO("Height: %f", height);
+    // ROS_INFO("Start X 1: %f", start_x_1);
+    // ROS_INFO("Start Y 1: %f", start_y_1);
+    // ROS_INFO("Start X 2: %f", start_x_2);
+    // ROS_INFO("Start Y 2: %f", start_y_2);
+    // ROS_INFO("Start X 3: %f", start_x_3);
+    // ROS_INFO("Start Y 3: %f", start_y_3);
+    
     MoveBaseClient ac("move_base", true);
     ac.waitForServer();
 
@@ -64,19 +105,6 @@ int main(int argc, char **argv)
     ros::Publisher path_1_pub = nh.advertise<nav_msgs::Path>("path_1", 10);
     ros::Publisher path_2_pub = nh.advertise<nav_msgs::Path>("path_2", 10);
     ros::Publisher path_3_pub = nh.advertise<nav_msgs::Path>("path_3", 10);
-
-    double step = 0.1;
-    double width = 0.5;
-    double height = 0.5;
-
-    double start_x_1 = 1.1; // 路径1的起始点x坐标（矩形的右下角）
-    double start_y_1 = -0.7; // 路径1的起始点y坐标（矩形的右下角）
-
-    double start_x_2 = 1.1; // 路径2的起始点x坐标（矩形的右下角）
-    double start_y_2 = -1.7; // 路径2的起始点x坐标（矩形的右下角）
-
-    double start_x_3 = 1.1; // 路径3的起始点x坐标（矩形的右下角）
-    double start_y_3 = -2.7; // 路径3的起始点x坐标（矩形的右下角）
 
     // 第一个矩形的路径
     nav_msgs::Path path_1;
@@ -179,8 +207,8 @@ int main(int argc, char **argv)
     // 先去 TAG 识别的点
     tf2::Quaternion quaternion;
     quaternion.setRPY(0, 0, -1.5707);
-    goal1.target_pose.pose.position.x = 0.5;
-    goal1.target_pose.pose.position.y = 0.0;
+    goal1.target_pose.pose.position.x = view_x;
+    goal1.target_pose.pose.position.y = view_y;
     goal1.target_pose.pose.orientation.z = quaternion.z();
     goal1.target_pose.pose.orientation.w = quaternion.w();
     goal1.target_pose.header.frame_id = "map";
