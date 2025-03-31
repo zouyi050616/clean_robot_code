@@ -28,14 +28,31 @@ int main(int argc, char **argv)
 
     ac.waitForServer();
 
-    double grab_x = 1.90;  // movebase目标点x，第一张桌子前方的导航点
-    double grab_y = -1.83; // movebase目标点y，第一张桌子前方的导航点
+    double grab_1_x = 1.90;  // movebase目标点x，第一张桌子前方的导航点
+    double grab_1_y = -1.83; // movebase目标点y，第一张桌子前方的导航点
+    
+    double grab_2_x = 1.90;  // movebase目标点x，第二张桌子前方的导航点
+    double grab_2_y = -3.05; // movebase目标点y，第二张桌子前方的导航点
+
+    double offset_left = 0.4;  // 左侧偏移量，单位为米
+    double offset_right = 0.4; // 右侧偏移量，单位为米
+
+    // 使用参数服务器获取参数，若不需要参数服务器，可将以下代码注释掉
+    /*------------------------------------------------------------------------*/
+    // nh.setParam("/complete_flow_node/grab_1_x", grab_1_x);
+    // nh.setParam("/complete_flow_node/grab_1_y", grab_1_y);
+    // nh.setParam("/complete_flow_node/grab_2_x", grab_2_x);
+    // nh.setParam("/complete_flow_node/grab_2_y", grab_2_y);
+    // nh.setParam("/complete_flow_node/offset_left", offset_left);
+    // nh.setParam("/complete_flow_node/offset_right", offset_right);
+    /*------------------------------------------------------------------------*/
+
 
     move_base_msgs::MoveBaseGoal goal;
 
     // 发送抓取导航点,桌子前方一小段距离
-    goal.target_pose.pose.position.x = grab_x;
-    goal.target_pose.pose.position.y = grab_y;
+    goal.target_pose.pose.position.x = grab_1_x;
+    goal.target_pose.pose.position.y = grab_1_y;
     goal.target_pose.pose.orientation.z = 0.0;
     goal.target_pose.pose.orientation.w = 1.0;
     goal.target_pose.header.frame_id = "map";
@@ -86,8 +103,8 @@ int main(int argc, char **argv)
     pub.publish(vel_msg);
 
     // 发送放置导航点
-    goal.target_pose.pose.position.x = grab_x;
-    goal.target_pose.pose.position.y = grab_y - 0.4; // 放置点位于抓取点右侧约0.4米
+    goal.target_pose.pose.position.x = grab_1_x;
+    goal.target_pose.pose.position.y = grab_1_y - offset_right; // 放置点位于抓取点右侧约0.4米
     goal.target_pose.pose.orientation.z = 0.0;
     goal.target_pose.pose.orientation.w = 1.0;
     goal.target_pose.header.frame_id = "map";
@@ -134,9 +151,6 @@ int main(int argc, char **argv)
     // 停下
     vel_msg.linear.x = 0.0;
     pub.publish(vel_msg);
-
-    double grab_2_x = 1.90;  // movebase目标点x，第二张桌子前方的导航点
-    double grab_2_y = -3.05; // movebase目标点y，第二张桌子前方的导航点
 
     // 发送抓取导航点,桌子前方一小段距离
     goal.target_pose.pose.position.x = grab_2_x;
@@ -190,7 +204,7 @@ int main(int argc, char **argv)
 
     // 发送放置导航点
     goal.target_pose.pose.position.x = grab_2_x;
-    goal.target_pose.pose.position.y = grab_2_y + 0.4; // 放置点位于抓取点左侧约0.4米
+    goal.target_pose.pose.position.y = grab_2_y + offset_left; // 放置点位于抓取点左侧约0.4米
     goal.target_pose.pose.orientation.z = 0.0;
     goal.target_pose.pose.orientation.w = 1.0;
     goal.target_pose.header.frame_id = "map";
