@@ -4,10 +4,17 @@
 
 serial::Serial ser; // 全局串口对象
 
+typedef std::vector<uint8_t> Buffer;
+
+Buffer close_buffer = {0xA0};
+
+Buffer open_buffer = {0xA1};
+
 // 射击服务回调函数
 bool shootCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res) {
     if(ser.isOpen()) {
-        ser.write("1"); // 发送ASCII字符'1'
+
+        ser.write(open_buffer); 
         ROS_INFO("Sent shoot command: 1");
         return true;
     }
@@ -18,7 +25,7 @@ bool shootCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res
 // 关闭服务回调函数
 bool closeCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res) {
     if(ser.isOpen()) {
-        ser.write("0"); // 发送ASCII字符'0'
+        ser.write(close_buffer); 
         ROS_INFO("Sent close command: 0");
         return true;
     }
@@ -33,7 +40,7 @@ int main(int argc, char **argv) {
     // 初始化串口（参数可通过launch文件配置）
     try {
         ser.setPort("/dev/ttyUSB0");      // 串口设备路径
-        ser.setBaudrate(115200);          // 波特率
+        ser.setBaudrate(9600);          // 波特率
         serial::Timeout to = serial::Timeout::simpleTimeout(1000);
         ser.setTimeout(to);
         ser.open();
