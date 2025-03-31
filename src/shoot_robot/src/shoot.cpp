@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     
     // 初始化串口（参数可通过launch文件配置）
     try {
-        ser.setPort("/dev/ttyUSB0");      // 串口设备路径
+        ser.setPort("/dev/ttyUSB3");      // 串口设备路径
         ser.setBaudrate(9600);          // 波特率
         serial::Timeout to = serial::Timeout::simpleTimeout(1000);
         ser.setTimeout(to);
