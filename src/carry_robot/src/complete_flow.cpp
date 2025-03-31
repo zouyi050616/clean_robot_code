@@ -37,6 +37,21 @@ int main(int argc, char **argv)
     double tag_2_put_x = 1.6; // 放置tag2的x坐标
     double tag_2_put_y = -0.77; // 放置tag2的y坐标
 
+    double offset_left = 0.1; // tag1在桌子中轴线左侧10cm
+    double offset_right = 0.1; // tag1在桌子中轴线右侧10cm
+
+    // 使用参数服务器获取参数，若不需要参数服务器，可将以下代码注释掉
+    /*------------------------------------------------------------------------*/
+    // nh.setParam("/w4a_complete_flow_node/grab_desk_x", grab_desk_x);
+    // nh.setParam("/w4a_complete_flow_node/grab_desk_y", grab_desk_y);
+    // nh.setParam("/w4a_complete_flow_node/tag_1_put_x", tag_1_put_x);
+    // nh.setParam("/w4a_complete_flow_node/tag_1_put_y", tag_1_put_y);
+    // nh.setParam("/w4a_complete_flow_node/tag_2_put_x", tag_2_put_x);
+    // nh.setParam("/w4a_complete_flow_node/tag_2_put_y", tag_2_put_y);
+    // nh.setParam("/w4a_complete_flow_node/offset_left", offset_left);
+    // nh.setParam("/w4a_complete_flow_node/offset_right", offset_right);
+    /*------------------------------------------------------------------------*/
+
     // tf2::Quaternion quaternion;
     // quaternion.setRPY(0, 0, 1.5707);
 
@@ -44,7 +59,7 @@ int main(int argc, char **argv)
 
     // 发送抓取导航点,桌子前方一小段距离
     goal.target_pose.pose.position.x = grab_desk_x;
-    goal.target_pose.pose.position.y = grab_desk_y + 0.1; // TAG1物块位置在桌子中轴线左侧10cm
+    goal.target_pose.pose.position.y = grab_desk_y + offset_left; // TAG1物块位置在桌子中轴线左侧10cm
     goal.target_pose.pose.orientation.z = 0.0;
     goal.target_pose.pose.orientation.w = 1.0;
     goal.target_pose.header.frame_id = "map";
@@ -147,7 +162,7 @@ int main(int argc, char **argv)
 
     // 发送抓取导航点,桌子前方一小段距离
     goal.target_pose.pose.position.x = grab_desk_x;
-    goal.target_pose.pose.position.y = grab_desk_y - 0.1; // TAG2物块位置在桌子中轴线右侧10cm
+    goal.target_pose.pose.position.y = grab_desk_y - offset_right; // TAG2物块位置在桌子中轴线右侧10cm
     goal.target_pose.pose.orientation.z = 0.0;
     goal.target_pose.pose.orientation.w = 1.0;
     goal.target_pose.header.frame_id = "map";

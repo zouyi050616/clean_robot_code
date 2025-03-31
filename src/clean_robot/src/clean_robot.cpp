@@ -48,12 +48,12 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "send_goals_node");
     ros::NodeHandle nh;
 
-    double step = 0.1;
-    double width = 0.5;
-    double height = 0.5;
+    double step = 0.1; // 步长
+    double width = 0.5; // 矩形的宽度
+    double height = 0.5; // 矩形的长度
 
-    double view_x = 0.0;
-    double view_y = 0.0;
+    double view_x = 0.0; // 视觉识别的点的x坐标   
+    double view_y = 0.0; // 视觉识别的点的y坐标
 
     double start_x_1 = 1.79; // 路径1的起始点x坐标（矩形的右下角）
     double start_y_1 = -0.02; // 路径1的起始点y坐标（矩形的右下角）
@@ -64,31 +64,24 @@ int main(int argc, char **argv)
     double start_x_3 = 0.06; // 路径3的起始点x坐标（矩形的右下角）
     double start_y_3 = 1.67; // 路径3的起始点x坐标（矩形的右下角）
 
-    nh.getParam("/clean_robot/step", step);
-    nh.getParam("/clean_robot/width", width);
-    nh.getParam("/clean_robot/height", height);
 
-    nh.getParam("/clean_robot/view_x", view_x);
-    nh.getParam("/clean_robot/view_y", view_y);
-    
-    nh.getParam("/clean_robot/start_x_1", start_x_1);
-    nh.getParam("/clean_robot/start_y_1", start_y_1);
-    nh.getParam("/clean_robot/start_x_2", start_x_2);
-    nh.getParam("/clean_robot/start_y_2", start_y_2);
-    nh.getParam("/clean_robot/start_x_3", start_x_3);
-    nh.getParam("/clean_robot/start_y_3", start_y_3);
+    // 使用参数服务器获取参数，若直接在代码中获取参数，可将以下代码注释掉
+    /*------------------------------------------------------------------------*/
+    // nh.getParam("/clean_robot/step", step);
+    // nh.getParam("/clean_robot/width", width);
+    // nh.getParam("/clean_robot/height", height);
 
-    //测试参数是否加载
-    // ROS_INFO("Step: %f", step);
-    // ROS_INFO("Width: %f", width);
-    // ROS_INFO("Height: %f", height);
-    // ROS_INFO("Start X 1: %f", start_x_1);
-    // ROS_INFO("Start Y 1: %f", start_y_1);
-    // ROS_INFO("Start X 2: %f", start_x_2);
-    // ROS_INFO("Start Y 2: %f", start_y_2);
-    // ROS_INFO("Start X 3: %f", start_x_3);
-    // ROS_INFO("Start Y 3: %f", start_y_3);
-    
+    // nh.getParam("/clean_robot/view_x", view_x);
+    // nh.getParam("/clean_robot/view_y", view_y);
+
+    // nh.getParam("/clean_robot/start_x_1", start_x_1);
+    // nh.getParam("/clean_robot/start_y_1", start_y_1);
+    // nh.getParam("/clean_robot/start_x_2", start_x_2);
+    // nh.getParam("/clean_robot/start_y_2", start_y_2);
+    // nh.getParam("/clean_robot/start_x_3", start_x_3);
+    // nh.getParam("/clean_robot/start_y_3", start_y_3);
+    /*-------------------------------------------------------------------------*/
+
     MoveBaseClient ac("move_base", true);
     ac.waitForServer();
 
