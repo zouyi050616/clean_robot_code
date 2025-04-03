@@ -26,3 +26,9 @@ target_link_libraries(w2u_tf_echo_node ${catkin_LIBRARIES})
 
 add_executable(movebase_client_node src/movebase_client.cpp)
 target_link_libraries(movebase_client_node ${catkin_LIBRARIES})
+
+add_executable(shoot_robot_node src/shoot_robot.cpp)
+target_link_libraries(shoot_robot_node ${catkin_LIBRARIES})
+
+add_executable(w2u_task_flow_node src/task_flow.cpp)
+target_link_libraries(w2u_task_flow_node ${catkin_LIBRARIES})

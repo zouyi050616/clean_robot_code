@@ -6,7 +6,10 @@
 class AprilTagController
 {
 private:
+
     ros::NodeHandle nh_;
+    ros::NodeHandle private_nh_;
+
     ros::Subscriber tag_sub_;
     ros::Publisher cmd_vel_pub_;
     ros::ServiceClient shoot_client;
@@ -22,13 +25,20 @@ private:
 
     std_srvs::Empty empty_srv;
 
+    // 在参数中加载要射击的tag目标
+    int tag_id;
+
+
 public:
-    AprilTagController()
+    AprilTagController() : private_nh_("~")
     {
         // 初始化订阅者和发布者
         tag_sub_ = nh_.subscribe("tag_detections", 1, &AprilTagController::tagCallback, this);
         cmd_vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
         shoot_client = nh_.serviceClient<std_srvs::Empty>("/shoot");
+
+        private_nh_.getParam("tag", tag_id);
+        ROS_INFO(" The value of tag is %d 。", tag_id);
     }
 
     void tagCallback(const apriltag_ros::AprilTagDetectionArray::ConstPtr &msg)
@@ -38,7 +48,7 @@ public:
 
         for (const auto &detection : msg->detections)
         {
-            if (detection.id[0] == 1)
+            if (detection.id[0] == tag_id)
             {
                 double current_x = detection.pose.pose.pose.position.x;
                 if (fabs(current_x) < target_x_tolerance)
