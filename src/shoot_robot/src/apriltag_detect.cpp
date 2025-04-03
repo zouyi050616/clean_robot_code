@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <apriltag_ros/AprilTagDetectionArray.h>
 #include <geometry_msgs/Twist.h>
+#include <std_srvs/Empty.h>
 
 class AprilTagController
 {
@@ -8,12 +9,18 @@ private:
     ros::NodeHandle nh_;
     ros::Subscriber tag_sub_;
     ros::Publisher cmd_vel_pub_;
+    ros::ServiceClient shoot_client;
 
     // PID控制参数
-    const double Kp = 0.5;                  // 比例系数
+    const double Kp = 5;                  // 比例系数
     const double target_x_tolerance = 0.05; // X轴位置容忍误差
 
+    const double z_target_distance = 0.2;
+    const double target_z_tolerance = 0.05;
+
     bool should_exit_ = false;
+
+    std_srvs::Empty empty_srv;
 
 public:
     AprilTagController()
@@ -21,6 +28,7 @@ public:
         // 初始化订阅者和发布者
         tag_sub_ = nh_.subscribe("tag_detections", 1, &AprilTagController::tagCallback, this);
         cmd_vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
+        shoot_client = nh_.serviceClient<std_srvs::Empty>("/shoot");
     }
 
     void tagCallback(const apriltag_ros::AprilTagDetectionArray::ConstPtr &msg)
@@ -30,18 +38,31 @@ public:
 
         for (const auto &detection : msg->detections)
         {
-            if (detection.id[0] == 5)
+            if (detection.id[0] == 1)
             {
                 double current_x = detection.pose.pose.pose.position.x;
                 if (fabs(current_x) < target_x_tolerance)
                 {
-                    // 触发退出条件
-                    should_exit_ = true;
-                    ros::shutdown(); // 终止ROS通信[1,7](@ref)
-                    return;          // 直接退出回调函数
+                    double current_z = detection.pose.pose.pose.position.z;
+                    if(fabs(current_z - z_target_distance) < target_z_tolerance)
+                    {
+                        std::cout << "Distance: " << current_z - z_target_distance << std::endl;
+                        shoot_client.call(empty_srv);
+                        // 触发退出条件
+                        should_exit_ = true;
+                        ros::shutdown(); // 终止ROS通信
+                        return;          // 直接退出回调函数
+                    }
+                    else
+                    {
+                        std::cout << "Distance: " << current_z << std::endl;
+                        cmd_vel.angular.z = 0;
+                        cmd_vel.linear.x = Kp * 0.3 * (current_z - z_target_distance);
+                        target_found = true;                        
+                    }
                 }
                 else if (fabs(current_x) > target_x_tolerance)
-                {
+                {                   
                     cmd_vel.angular.z = Kp * (-current_x);
                     target_found = true;
                 }
