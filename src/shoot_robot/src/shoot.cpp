@@ -8,7 +8,7 @@ typedef std::vector<uint8_t> Buffer;
 
 Buffer close_buffer = {0xA0};
 
-Buffer open_buffer = {0xA3};
+Buffer open_buffer = {0xA1};
 
 // 射击服务回调函数
 bool shootCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)

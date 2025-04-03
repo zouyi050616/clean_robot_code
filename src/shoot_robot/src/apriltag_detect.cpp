@@ -6,7 +6,6 @@
 class AprilTagController
 {
 private:
-
     ros::NodeHandle nh_;
     ros::NodeHandle private_nh_;
 
@@ -15,11 +14,11 @@ private:
     ros::ServiceClient shoot_client;
 
     // PID控制参数
-    const double Kp = 5;                  // 比例系数
-    const double target_x_tolerance = 0.05; // X轴位置容忍误差
+    const double Kp = 5;                    // 比例系数
+    const double target_x_tolerance = 0.04; // X轴位置容忍误差
 
     const double z_target_distance = 0.2;
-    const double target_z_tolerance = 0.05;
+    const double target_z_tolerance = 0.04;
 
     bool should_exit_ = false;
 
@@ -27,7 +26,6 @@ private:
 
     // 在参数中加载要射击的tag目标
     int tag_id;
-
 
 public:
     AprilTagController() : private_nh_("~")
@@ -51,37 +49,46 @@ public:
             if (detection.id[0] == tag_id)
             {
                 double current_x = detection.pose.pose.pose.position.x;
-                if (fabs(current_x) < target_x_tolerance)
+
+                double current_z = detection.pose.pose.pose.position.z;
+
+                if ((fabs(current_x) < target_x_tolerance) && (fabs(current_z - z_target_distance) < target_z_tolerance))
                 {
-                    double current_z = detection.pose.pose.pose.position.z;
-                    if(fabs(current_z - z_target_distance) < target_z_tolerance)
+                    shoot_client.call(empty_srv);
+
+                    cmd_vel.angular.z = - 0.3;
+                    int count = 0;
+                    ros::Rate loop_rate(10);
+                    while (ros::ok() && count < 10)
                     {
-                        std::cout << "Distance: " << current_z - z_target_distance << std::endl;
-                        shoot_client.call(empty_srv);
-                        // 触发退出条件
-                        should_exit_ = true;
-                        ros::shutdown(); // 终止ROS通信
-                        return;          // 直接退出回调函数
+                        cmd_vel_pub_.publish(cmd_vel);
+                        ros::spinOnce();
+                        loop_rate.sleep();
+                        count++;
                     }
-                    else
-                    {
-                        std::cout << "Distance: " << current_z << std::endl;
-                        cmd_vel.angular.z = 0;
-                        cmd_vel.linear.x = Kp * 0.3 * (current_z - z_target_distance);
-                        target_found = true;                        
-                    }
+
+                    should_exit_ = true;
+                    ros::shutdown(); // 终止ROS通信
+                    return;          // 直接退出回调函数
                 }
+
                 else if (fabs(current_x) > target_x_tolerance)
-                {                   
+                {
                     cmd_vel.angular.z = Kp * (-current_x);
-                    target_found = true;
                 }
+                else if (fabs(current_z - z_target_distance) > target_z_tolerance)
+                {
+                    cmd_vel.linear.x = Kp * 0.3 * (current_z - z_target_distance);
+                }
+                target_found = true;
                 break;
             }
         }
-
         if (!target_found)
+        {
+            cmd_vel.linear.x;
             cmd_vel.angular.z = 0;
+        }
         cmd_vel_pub_.publish(cmd_vel);
     }
 };

@@ -7,6 +7,11 @@
 
 using namespace std;
 
+void sleep(double second)
+{
+    ros::Duration(second).sleep();
+}
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 int main(int argc, char **argv)
@@ -23,7 +28,7 @@ int main(int argc, char **argv)
     // 第一个普通靶标在 map 坐标系下的坐标位置，前方0.5米，向右90度
     tf2::Quaternion quaternion;
     quaternion.setRPY(0, 0, -1.5707);
-    goal1.target_pose.pose.position.x = 0.5;
+    goal1.target_pose.pose.position.x = 0.4;
     goal1.target_pose.pose.position.y = 0.0;
     goal1.target_pose.pose.orientation.z = quaternion.z();
     goal1.target_pose.pose.orientation.w = quaternion.w();
@@ -36,6 +41,7 @@ int main(int argc, char **argv)
     {
         ROS_INFO("The Goal 1 Reached Successfully!!!");
         system("roslaunch shoot_robot shoot_tag_1.launch");
+        sleep(10.0);
     }
     else
     {
