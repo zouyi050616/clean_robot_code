@@ -89,6 +89,10 @@ Visualization Manager:
           Value: true
         odom_combined:
           Value: false
+        tag_1:
+          Value: true
+        tag_2:
+          Value: true
         tof1:
           Value: false
         tof2:
@@ -119,7 +123,10 @@ Visualization Manager:
                 camera_link:
                   camera_color_frame:
                     camera_color_optical_frame:
-                      {}
+                      tag_1:
+                        {}
+                      tag_2:
+                        {}
                   camera_depth_frame:
                     camera_depth_optical_frame:
                       {}
@@ -198,7 +205,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
