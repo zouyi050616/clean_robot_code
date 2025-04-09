@@ -39,12 +39,12 @@ int main(int argc, char **argv)
 
     // 使用参数服务器获取参数，若不需要参数服务器，可将以下代码注释掉
     /*------------------------------------------------------------------------*/
-    // nh.setParam("/complete_flow_node/grab_1_x", grab_1_x);
-    // nh.setParam("/complete_flow_node/grab_1_y", grab_1_y);
-    // nh.setParam("/complete_flow_node/grab_2_x", grab_2_x);
-    // nh.setParam("/complete_flow_node/grab_2_y", grab_2_y);
-    // nh.setParam("/complete_flow_node/offset_left", offset_left);
-    // nh.setParam("/complete_flow_node/offset_right", offset_right);
+    // nh.getParam("/complete_flow_node/grab_1_x", grab_1_x);
+    // nh.getParam("/complete_flow_node/grab_1_y", grab_1_y);
+    // nh.getParam("/complete_flow_node/grab_2_x", grab_2_x);
+    // nh.getParam("/complete_flow_node/grab_2_y", grab_2_y);
+    // nh.getParam("/complete_flow_node/offset_left", offset_left);
+    // nh.getParam("/complete_flow_node/offset_right", offset_right);
     /*------------------------------------------------------------------------*/
 
 

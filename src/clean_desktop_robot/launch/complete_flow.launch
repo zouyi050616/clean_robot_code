@@ -1,5 +1,5 @@
 <launch>
-    <node name="clean_desktop_robot" pkg="complete_flow_node" type="complete_flow_node" output="screen">
+    <node name="complete_flow_node" pkg="clean_desktop_robot" type="complete_flow_node" output="screen">
         <!-- 第一张桌子前方的导航点x坐标 -->
         <param name="grab_1_x" value="1.90"/>
         <!-- 第一张桌子前方的导航点y坐标 -->

@@ -1,6 +1,6 @@
 <launch>
     <!-- 定义carry_robot节点 -->
-    <node name="carry_robot" pkg="w4a_complete_flow_node" type="w4a_complete_flow_node" output="screen">
+    <node name="w4a_complete_flow_node" pkg="carry_robot" type="w4a_complete_flow_node" output="screen">
         <!-- 定义抓取目标桌面的x坐标 -->
         <param name="grab_desk_x" value="1.90"/>
         <!-- 定义抓取目标桌面的y坐标 -->
