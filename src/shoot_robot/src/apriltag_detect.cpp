@@ -1,26 +1,42 @@
 #include <ros/ros.h>
 #include <apriltag_ros/AprilTagDetectionArray.h>
 #include <geometry_msgs/Twist.h>
+#include <std_srvs/Empty.h>
 
 class AprilTagController
 {
 private:
     ros::NodeHandle nh_;
+    ros::NodeHandle private_nh_;
+
     ros::Subscriber tag_sub_;
     ros::Publisher cmd_vel_pub_;
+    ros::ServiceClient shoot_client;
 
     // PID控制参数
-    const double Kp = 0.5;                  // 比例系数
-    const double target_x_tolerance = 0.05; // X轴位置容忍误差
+    const double Kp = 5;                    // 比例系数
+    const double target_x_tolerance = 0.04; // X轴位置容忍误差
+
+    const double z_target_distance = 0.2;
+    const double target_z_tolerance = 0.04;
 
     bool should_exit_ = false;
 
+    std_srvs::Empty empty_srv;
+
+    // 在参数中加载要射击的tag目标
+    int tag_id;
+
 public:
-    AprilTagController()
+    AprilTagController() : private_nh_("~")
     {
         // 初始化订阅者和发布者
         tag_sub_ = nh_.subscribe("tag_detections", 1, &AprilTagController::tagCallback, this);
         cmd_vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
+        shoot_client = nh_.serviceClient<std_srvs::Empty>("/shoot");
+
+        private_nh_.getParam("tag", tag_id);
+        ROS_INFO(" The value of tag is %d 。", tag_id);
     }
 
     void tagCallback(const apriltag_ros::AprilTagDetectionArray::ConstPtr &msg)
@@ -30,27 +46,49 @@ public:
 
         for (const auto &detection : msg->detections)
         {
-            if (detection.id[0] == 5)
+            if (detection.id[0] == tag_id)
             {
                 double current_x = detection.pose.pose.pose.position.x;
-                if (fabs(current_x) < target_x_tolerance)
+
+                double current_z = detection.pose.pose.pose.position.z;
+
+                if ((fabs(current_x) < target_x_tolerance) && (fabs(current_z - z_target_distance) < target_z_tolerance))
                 {
-                    // 触发退出条件
+                    shoot_client.call(empty_srv);
+
+                    cmd_vel.angular.z = - 0.3;
+                    int count = 0;
+                    ros::Rate loop_rate(10);
+                    while (ros::ok() && count < 10)
+                    {
+                        cmd_vel_pub_.publish(cmd_vel);
+                        ros::spinOnce();
+                        loop_rate.sleep();
+                        count++;
+                    }
+
                     should_exit_ = true;
-                    ros::shutdown(); // 终止ROS通信[1,7](@ref)
+                    ros::shutdown(); // 终止ROS通信
                     return;          // 直接退出回调函数
                 }
+
                 else if (fabs(current_x) > target_x_tolerance)
                 {
                     cmd_vel.angular.z = Kp * (-current_x);
-                    target_found = true;
                 }
+                else if (fabs(current_z - z_target_distance) > target_z_tolerance)
+                {
+                    cmd_vel.linear.x = Kp * 0.3 * (current_z - z_target_distance);
+                }
+                target_found = true;
                 break;
             }
         }
-
         if (!target_found)
+        {
+            cmd_vel.linear.x;
             cmd_vel.angular.z = 0;
+        }
         cmd_vel_pub_.publish(cmd_vel);
     }
 };
