@@ -159,7 +159,7 @@ int main(int argc, char **argv)
         count = 0;
         while (ros::ok())
         {
-            if (tag_x >= 0.31)  //0.31
+            if (tag_x >= 0.26)  //0.31
 		{
 			pub.publish(vel_msg);
 			loop_rate.sleep();
@@ -220,9 +220,6 @@ int main(int argc, char **argv)
         ROS_WARN("Goal 1 Failed!");
     }
 
-
-
-
     // ---------------------- Backward after grab
     vel_msg.linear.x = -0.3;
     count = 0;
@@ -234,52 +231,6 @@ int main(int argc, char **argv)
     }
     vel_msg.linear.x = 0.0;
     pub.publish(vel_msg);
-
-
-
-    // ---------------------- Backward after grab
-    // vel_msg.angular.z = -1.5;
-    // count = 0;
-    // while (ros::ok() && count < 12)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.angular.z = 0.0;
-    // pub.publish(vel_msg);
-
-
-    // // ---------------------- Backward after grab
-    // vel_msg.linear.x = 0.2;
-    // count = 0;
-    // while (ros::ok() && count < 30)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.linear.x = 0.0;
-    // pub.publish(vel_msg);
-
-
-
-    // // ---------------------- Backward after grab
-    // vel_msg.angular.z = 1.5;
-    // count = 0;
-    // while (ros::ok() && count < 12)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.angular.z = 0.0;
-    // pub.publish(vel_msg);
-
-    // system("roslaunch clean_desktop_robot arm_put.launch");
-
-
-
 
     // ---------------------- Goal 1 (Place)
     goal.target_pose.pose.position.y = grab_1_y - offset_right;
@@ -305,8 +256,6 @@ int main(int argc, char **argv)
         system("roslaunch clean_desktop_robot arm_put.launch");
     }
 
-
-
     vel_msg.linear.x = -0.3;
     count = 0;
     while (ros::ok() && count < 16)
@@ -321,10 +270,6 @@ int main(int argc, char **argv)
     tag_x = 0.0;
     tag_y = 0.0;
     tag_yaw = 0.0;
-
-
-
-
 
     // ---------------------- Goal 2 (Grab)
     goal.target_pose.pose.position.x = grab_2_x;
@@ -345,7 +290,7 @@ int main(int argc, char **argv)
         count = 0;
         while (ros::ok())
         {
-            if (tag_x >= 0.29)  //0.29
+            if (tag_x >= 0.26)  //0.29
 		{
 			pub.publish(vel_msg);
 			loop_rate.sleep();
@@ -401,23 +346,16 @@ int main(int argc, char **argv)
 	}
     }
 
-
-
-
-
-    // vel_msg.linear.x = -0.3;
-    // count = 0;
-    // while (ros::ok() && count < 14)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.linear.x = 0.0;
-    // pub.publish(vel_msg);
-
-
-
+    vel_msg.linear.x = -0.3;
+    count = 0;
+    while (ros::ok() && count < 14)
+    {
+        pub.publish(vel_msg);
+        loop_rate.sleep();
+        count++;
+    }
+    vel_msg.linear.x = 0.0;
+    pub.publish(vel_msg);
 
     // ---------------------- Goal 2 (Place)
     goal.target_pose.pose.position.y = grab_2_y + offset_left;
@@ -445,7 +383,7 @@ int main(int argc, char **argv)
 
     vel_msg.linear.x = -0.5;
     count = 0;
-    while (ros::ok() && count < 50)    //50
+    while (ros::ok() && count < 10)    //50
     {
         pub.publish(vel_msg);
         loop_rate.sleep();
@@ -453,20 +391,6 @@ int main(int argc, char **argv)
     }
     vel_msg.linear.x = 0.0;
     pub.publish(vel_msg);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // ---------------------- Return Home 1
     //goal.target_pose.pose.position.x = 2.1;
@@ -485,21 +409,6 @@ int main(int argc, char **argv)
     //}
     
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // ---------------------- Return Home 2
     goal.target_pose.pose.position.x = 0.2;
     goal.target_pose.pose.position.y = 0.2;

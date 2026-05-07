@@ -21,20 +21,20 @@ int main(int argc, char **argv)
     //第一步，运动到放置点
     upros_message::ArmPosition move_srv;
     move_srv.request.x = 0;
-    move_srv.request.y = 300.0;
+    move_srv.request.y = 0.0;
     move_srv.request.z = -20.0;
     arm_move_close_client.call(move_srv);
-    sleep(5.0);
+    sleep(0.6);   //3.0
 
     std_srvs::Empty empty_srv;
     
     //第二步，打开夹爪 
     arm_release_client.call(empty_srv);
-    sleep(5.0);
+    sleep(0.6);
 
     //第三步，返回零位
     arm_zero_client.call(empty_srv);
-    sleep(5.0);
+    sleep(0.6);
 
     ros::shutdown();
 

@@ -8,10 +8,17 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <geometry_msgs/Quaternion.h>
+#include <dynamic_reconfigure/Reconfigure.h>
+#include <dynamic_reconfigure/BoolParameter.h>
+#include <dynamic_reconfigure/Config.h>
 #include "upros_message/ArmPosition.h"
 #include "std_srvs/Empty.h"
 #include <thread> 
 #include <cmath>
+#include <string>
+
+// 全局变量和TF反馈
+
 double tag_x = 0.0;
 double tag_y = 0.0;
 double tag_yaw = 0.0;
@@ -25,6 +32,8 @@ void sleep(double second)
 {
     ros::Duration(second).sleep();
 }
+
+//printRobotPose和循环监听函数
 
 void printRobotPose(tf2_ros::Buffer &tfBuffer)
 {
@@ -44,6 +53,8 @@ void printRobotPose(tf2_ros::Buffer &tfBuffer)
         double roll, pitch, yaw;
         tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
         
+        // 稳定性判断
+
         if (tag_x != x and tag_y != y)
         {
         	tag_x = x;
@@ -81,6 +92,51 @@ void printRobotPoseLoop(tf2_ros::Buffer *tfBuffer)
     }
 }
 
+// 临时清理代价地图
+
+bool setCostmapLayerEnabled(ros::NodeHandle &nh, const std::string &service_name, bool enabled)
+{
+    dynamic_reconfigure::Reconfigure srv;
+    dynamic_reconfigure::BoolParameter enabled_param;
+    enabled_param.name = "enabled";
+    enabled_param.value = enabled;
+    srv.request.config.bools.push_back(enabled_param);
+
+    ros::ServiceClient client = nh.serviceClient<dynamic_reconfigure::Reconfigure>(service_name);
+    if (!client.waitForExistence(ros::Duration(1.0)))
+    {
+        ROS_WARN("Dynamic reconfigure service not available: %s", service_name.c_str());
+        return false;
+    }
+
+    if (!client.call(srv))
+    {
+        ROS_WARN("Failed to set costmap layer: %s", service_name.c_str());
+        return false;
+    }
+
+    return true;
+}
+
+void clearMoveBaseCostmaps(ros::NodeHandle &nh)
+{
+    ros::ServiceClient clear_client = nh.serviceClient<std_srvs::Empty>("/move_base/clear_costmaps");
+    std_srvs::Empty empty_srv;
+    if (clear_client.waitForExistence(ros::Duration(1.0)))
+    {
+        clear_client.call(empty_srv);
+    }
+}
+
+void setReturnLocalObstacleBlindMode(ros::NodeHandle &nh, bool blind_mode)
+{
+    // Return-only mode: ignore local laser obstacles near the wall, then restore normal navigation.
+    setCostmapLayerEnabled(nh, "/move_base/local_costmap/obstacle_layer/set_parameters", !blind_mode);
+    clearMoveBaseCostmaps(nh);
+}
+
+// 主函数初始化
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "send_goals_node");
@@ -116,11 +172,13 @@ int main(int argc, char **argv)
     ros::ServiceClient arm_move_close_client = nh.serviceClient<upros_message::ArmPosition>("/upros_arm_control/arm_pos_service_close");
     upros_message::ArmPosition move_srv;
 
+
     move_base_msgs::MoveBaseGoal goal;
     ros::Rate loop_rate(10);
     geometry_msgs::Twist vel_msg;
     int count = 0;
 
+    //出发区到第一张桌子
 
     vel_msg.linear.x = 0.5;
     count = 0;
@@ -176,14 +234,14 @@ int main(int argc, char **argv)
 
         while(ros::ok())
         {
-		if (grab_flag == 0 and re_grab_count <= 4 and tag_x != 0.0)
+		if (grab_flag == 0 and re_grab_count <= 4 and tag_x != 0.0)         //微调和重试
 		{
 			ROS_INFO("retry");
 			if (tag_x >= 0.25)
 			{
 				vel_msg.linear.x = 0.1;
 				count = 0;
-				while (ros::ok() && count < 5)
+				while (ros::ok() && count < 10)
 				{
 				    pub.publish(vel_msg);
 				    loop_rate.sleep();
@@ -223,10 +281,24 @@ int main(int argc, char **argv)
 
 
 
+    //第一次投放
     // ---------------------- Backward after grab
-    vel_msg.linear.x = -0.3;
+    vel_msg.angular.z = -1.5;
     count = 0;
-    while (ros::ok() && count < 14)
+    while (ros::ok() && count < 9)
+    {
+        pub.publish(vel_msg);
+        loop_rate.sleep();
+        count++;
+    }
+    vel_msg.angular.z = 0.0;
+    pub.publish(vel_msg);
+
+
+    // ---------------------- Backward after grab
+    vel_msg.linear.x = 0.2;
+    count = 0;
+    while (ros::ok() && count < 25)
     {
         pub.publish(vel_msg);
         loop_rate.sleep();
@@ -238,77 +310,84 @@ int main(int argc, char **argv)
 
 
     // ---------------------- Backward after grab
-    // vel_msg.angular.z = -1.5;
-    // count = 0;
-    // while (ros::ok() && count < 12)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.angular.z = 0.0;
-    // pub.publish(vel_msg);
-
-
-    // // ---------------------- Backward after grab
-    // vel_msg.linear.x = 0.2;
-    // count = 0;
-    // while (ros::ok() && count < 30)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.linear.x = 0.0;
-    // pub.publish(vel_msg);
-
-
-
-    // // ---------------------- Backward after grab
-    // vel_msg.angular.z = 1.5;
-    // count = 0;
-    // while (ros::ok() && count < 12)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.angular.z = 0.0;
-    // pub.publish(vel_msg);
-
-    // system("roslaunch clean_desktop_robot arm_put.launch");
-
-
-
-
-    // ---------------------- Goal 1 (Place)
-    goal.target_pose.pose.position.y = grab_1_y - offset_right;
-    goal.target_pose.header.stamp = ros::Time::now();
-
-    ac.sendGoal(goal);
-    ROS_INFO("MoveBase Send Goal 1 Trash !!!");
-    ac.waitForResult();
-
-    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    vel_msg.angular.z = 1.5;
+    count = 0;
+    while (ros::ok() && count < 12)
     {
-        ROS_INFO("Goal 1 Trash Reached!");
-        vel_msg.linear.x = 0.1;
-        count = 0;
-        while (ros::ok() && count < 22)  //22
-        {
-            pub.publish(vel_msg);
-            loop_rate.sleep();
-            count++;
-        }
-        vel_msg.linear.x = 0.0;
         pub.publish(vel_msg);
-        system("roslaunch clean_desktop_robot arm_put.launch");
+        loop_rate.sleep();
+        count++;
     }
+    vel_msg.angular.z = 0.0;
+    pub.publish(vel_msg);
 
 
 
+
+    // ---------------------- Backward after grab
+    vel_msg.linear.x = 0.15;
+    count = 0;
+    while (ros::ok() && count < 10)
+    {
+        pub.publish(vel_msg);
+        loop_rate.sleep();
+        count++;
+    }
+    vel_msg.linear.x = 0.0;
+    pub.publish(vel_msg);
+
+
+
+
+    system("roslaunch clean_desktop_robot arm_put.launch");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // // ---------------------- Goal 1 (Place)
+    // goal.target_pose.pose.position.y = grab_1_y - offset_right;
+    // goal.target_pose.header.stamp = ros::Time::now();
+
+    // ac.sendGoal(goal);
+    // ROS_INFO("MoveBase Send Goal 1 Trash !!!");
+    // ac.waitForResult();
+
+    // if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    // {
+    //     ROS_INFO("Goal 1 Trash Reached!");
+    //     vel_msg.linear.x = 0.1;
+    //     count = 0;
+    //     while (ros::ok() && count < 22)  //22
+    //     {
+    //         pub.publish(vel_msg);
+    //         loop_rate.sleep();
+    //         count++;
+    //     }
+    //     vel_msg.linear.x = 0.0;
+    //     pub.publish(vel_msg);
+    //     system("roslaunch clean_desktop_robot arm_put.launch");
+    // }
+
+
+    //撤离
     vel_msg.linear.x = -0.3;
     count = 0;
+    
     while (ros::ok() && count < 16)
     {
         pub.publish(vel_msg);
@@ -325,10 +404,13 @@ int main(int argc, char **argv)
 
 
 
-
+    //第二张桌子
     // ---------------------- Goal 2 (Grab)
     goal.target_pose.pose.position.x = grab_2_x;
     goal.target_pose.pose.position.y = grab_2_y;
+    // Goal 2 grab heading: turn left 5 degrees from the original yaw=0 heading.
+    goal.target_pose.pose.orientation.z = 0.04362;
+    goal.target_pose.pose.orientation.w = 0.99905;
     goal.target_pose.header.stamp = ros::Time::now();
 
     ac.sendGoal(goal);
@@ -369,7 +451,7 @@ int main(int argc, char **argv)
 			{
 				vel_msg.linear.x = 0.1;
 				count = 0;
-				while (ros::ok() && count < 5)
+				while (ros::ok() && count < 10)
 				{
 				    pub.publish(vel_msg);
 				    loop_rate.sleep();
@@ -419,33 +501,105 @@ int main(int argc, char **argv)
 
 
 
-    // ---------------------- Goal 2 (Place)
-    goal.target_pose.pose.position.y = grab_2_y + offset_left;
-    goal.target_pose.header.stamp = ros::Time::now();
 
-    ac.sendGoal(goal);
-    ROS_INFO("MoveBase Send Goal 2 Trash !!!");
-    ac.waitForResult();
 
-    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+
+
+    //第二次投放
+    // ---------------------- Backward after grab
+    vel_msg.angular.z = 1.5;
+    count = 0;
+    while (ros::ok() && count < 10)
     {
-        ROS_INFO("Goal 2 Trash Reached!");
-        vel_msg.linear.x = 0.1;
-        count = 0;
-        while (ros::ok() && count < 24)   //24
-        {
-            pub.publish(vel_msg);
-            loop_rate.sleep();
-            count++;
-        }
-        vel_msg.linear.x = 0.0;
         pub.publish(vel_msg);
-        system("roslaunch clean_desktop_robot arm_put.launch");
+        loop_rate.sleep();
+        count++;
     }
+    vel_msg.angular.z = 0.0;
+    pub.publish(vel_msg);
+
+
+    // ---------------------- Backward after grab
+    vel_msg.linear.x = 0.2;
+    count = 0;
+    while (ros::ok() && count < 30)
+    {
+        pub.publish(vel_msg);
+        loop_rate.sleep();
+        count++;
+    }
+    vel_msg.linear.x = 0.0;
+    pub.publish(vel_msg);
+
+
+
+    // ---------------------- Backward after grab
+    vel_msg.angular.z = -1.5;
+    count = 0;
+    while (ros::ok() && count < 11)
+    {
+        pub.publish(vel_msg);
+        loop_rate.sleep();
+        count++;
+    }
+    vel_msg.angular.z = 0.0;
+    pub.publish(vel_msg);
+
+
+   // ---------------------- Backward after grab
+    vel_msg.linear.x = 0.15;
+    count = 0;
+    while (ros::ok() && count < 10)
+    {
+        pub.publish(vel_msg);
+        loop_rate.sleep();
+        count++;
+    }
+    vel_msg.linear.x = 0.0;
+    pub.publish(vel_msg);
+
+
+
+
+    system("roslaunch clean_desktop_robot arm_put.launch");
+
+
+
+
+
+
+
+
+    // // ---------------------- Goal 2 (Place)
+    // goal.target_pose.pose.position.y = grab_2_y + offset_left;
+    // goal.target_pose.header.stamp = ros::Time::now();
+
+    // ac.sendGoal(goal);
+    // ROS_INFO("MoveBase Send Goal 2 Trash !!!");
+    // ac.waitForResult();
+
+    // if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    // {
+    //     ROS_INFO("Goal 2 Trash Reached!");
+    //     vel_msg.linear.x = 0.1;
+    //     count = 0;
+    //     while (ros::ok() && count < 24)   //24
+    //     {
+    //         pub.publish(vel_msg);
+    //         loop_rate.sleep();
+    //         count++;
+    //     }
+    //     vel_msg.linear.x = 0.0;
+    //     pub.publish(vel_msg);
+    //     system("roslaunch clean_desktop_robot arm_put.launch");
+    // }
+
+
+    //撤离
 
     vel_msg.linear.x = -0.5;
     count = 0;
-    while (ros::ok() && count < 50)    //50
+    while (ros::ok() && count < 30)    //50
     {
         pub.publish(vel_msg);
         loop_rate.sleep();
@@ -498,33 +652,50 @@ int main(int argc, char **argv)
 
 
 
-
+    //返回出发区
 
     // ---------------------- Return Home 2
-    goal.target_pose.pose.position.x = 0.2;
-    goal.target_pose.pose.position.y = 0.2;
-    goal.target_pose.pose.orientation.z = 0.92015;
-    goal.target_pose.pose.orientation.w = -0.39157;
+    // Return home: navigate to a safer point away from the wall, then drive straight into the start area.
+    goal.target_pose.header.frame_id = "map";
+    goal.target_pose.pose.position.x = 0.4;
+    goal.target_pose.pose.position.y = 0.4;
+    goal.target_pose.pose.orientation.z = 0.93358;
+    goal.target_pose.pose.orientation.w = -0.35837;
     goal.target_pose.header.stamp = ros::Time::now();
+
+    // Return-only blind navigation: disable local laser obstacles before entering the wall-side start area.
+    setReturnLocalObstacleBlindMode(nh, true);
 
     ac.sendGoal(goal);
     ROS_INFO("Send Goal Home 2 !!!");
     ac.waitForResult();
 
+    setReturnLocalObstacleBlindMode(nh, false);
+
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         ROS_INFO("Back to Home 2!");
     }
+    else
+    {
+        vel_msg.linear.x = 0.0;
+        vel_msg.angular.z = 0.0;
+        pub.publish(vel_msg);
+        return 0;
+    }
 
-    vel_msg.linear.x = 0.2;
+    // Final entry: keep the reached heading and drive straight back into the start area.
+    vel_msg.linear.x = 0.3;
+    vel_msg.angular.z = 0.0;
     count = 0;
-    while (ros::ok() && count < 13)
+    while (ros::ok() && count < 15)
     {
         pub.publish(vel_msg);
         loop_rate.sleep();
         count++;
     }
+    vel_msg.linear.x = 0.0;
+    pub.publish(vel_msg);
 
     return 0;
 }
-

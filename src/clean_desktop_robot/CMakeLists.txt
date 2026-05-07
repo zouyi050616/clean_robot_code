@@ -44,7 +44,8 @@ target_link_libraries(arm_put_node ${catkin_LIBRARIES})
 add_executable(task_flow_node src/task_flow.cpp)
 target_link_libraries(task_flow_node ${catkin_LIBRARIES})
 
-add_executable(complete_flow_node src/complete_flow.cpp)
+add_executable(complete_flow_node src/complete_flow00.cpp)
+#把complete_flow.cpp编译成叫complete_flow_node的可执行文件
 target_link_libraries(complete_flow_node ${catkin_LIBRARIES})
 
 # add_executable(color_detect src/color_detect.cpp)

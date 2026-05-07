@@ -4,8 +4,6 @@
 #include "geometry_msgs/PointStamped.h"
 
 #include "upros_message/ArmPosition.h"
-#include <upros_message/SingleServo.h>
-#include <upros_message/MultipleServo.h>
 #include "std_srvs/Empty.h"
 #include <ros/ros.h>
 
@@ -27,21 +25,13 @@ int main(int argc, char **argv)
     ros::ServiceClient arm_zero_client = nh.serviceClient<std_srvs::Empty>("/upros_arm_control/zero_service");
     ros::ServiceClient arm_grab_client = nh.serviceClient<std_srvs::Empty>("/upros_arm_control/grab_service");
     ros::ServiceClient arm_release_client = nh.serviceClient<std_srvs::Empty>("/upros_arm_control/release_service");
-    ros::ServiceClient arm_move_close_client = nh.serviceClient<upros_message::ArmPosition>("/upros_arm_control/arm_pos_service_close");
-
-    ros::Publisher single_joint_pub_;
-    ros::Publisher multiple_joint_pub_;
-    single_joint_pub_ = nh.advertise<upros_message::SingleServo>("/single_servo_topic", 10);
-    multiple_joint_pub_ = nh.advertise<upros_message::MultipleServo>("/multiple_servo_topic", 10);
-    upros_message::SingleServo single_servo;
-    std::vector<int> servo_bias_ = {0, 0, 0, 0, 0, 0};
 
     tf2_ros::Buffer buffer;
     tf2_ros::TransformListener listener(buffer);
     ROS_INFO("tf coordinate transformaing....");
 
     // 获取tag到机械臂基坐标的坐标变换
-    geometry_msgs::TransformStamped tfs_1 = buffer.lookupTransform("arm_base_link", "tag_1", ros::Time(0), ros::Duration(5));
+    geometry_msgs::TransformStamped tfs_1 = buffer.lookupTransform("arm_base_link", "tag_1", ros::Time(0), ros::Duration(100));
 
     // 单位转换，ros坐标系到逆运算坐标系
     int x = -int(tfs_1.transform.translation.y * 1000);
@@ -53,7 +43,7 @@ int main(int argc, char **argv)
     
     // 第一步，打开夹爪
     arm_release_client.call(empty_srv);
-    sleep(0.6);  //3.0
+    sleep(5.0);
 
     // 第二步，运动到抓取位置
     upros_message::ArmPosition move_srv;
@@ -61,36 +51,16 @@ int main(int argc, char **argv)
     move_srv.request.y = y;
     move_srv.request.z = z;
     arm_move_open_client.call(move_srv);
-    sleep(1.5);  //3.0
+    sleep(5.0);
 
 
     // 第三步，闭合夹爪
     arm_grab_client.call(empty_srv);
-    sleep(1.0);  //3.0
+    sleep(5.0);
 
     // 第四步，返回零位
     arm_zero_client.call(empty_srv);
-    sleep(1.5);
-
-            
-    // upros_message::MultipleServo multiple_servo;
-    // for (int i = 0; i < 6; i++)
-    // {
-    //             upros_message::SingleServo single_servo;
-    //             single_servo.ID = i + 1;
-    //             single_servo.Rotation_Speed = 150;
-                
-    //             if(i == 1){
-    //                 single_servo.Target_position_Angle = -800;
-    //             }
-    //             if(i == 5){
-    //                 single_servo.Target_position_Angle = -400;
-    //             }
-    //             multiple_servo.servo_gather.push_back(single_servo);
-    // }
-    // multiple_joint_pub_.publish(multiple_servo);
-
-    // sleep(1.5);
+    sleep(5.0);
 
     ros::shutdown();
 

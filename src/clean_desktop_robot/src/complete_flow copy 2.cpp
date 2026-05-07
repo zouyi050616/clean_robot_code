@@ -159,7 +159,7 @@ int main(int argc, char **argv)
         count = 0;
         while (ros::ok())
         {
-            if (tag_x >= 0.31)  //0.31
+            if (tag_x >= 0.25)  //0.31
 		{
 			pub.publish(vel_msg);
 			loop_rate.sleep();
@@ -237,48 +237,6 @@ int main(int argc, char **argv)
 
 
 
-    // ---------------------- Backward after grab
-    // vel_msg.angular.z = -1.5;
-    // count = 0;
-    // while (ros::ok() && count < 12)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.angular.z = 0.0;
-    // pub.publish(vel_msg);
-
-
-    // // ---------------------- Backward after grab
-    // vel_msg.linear.x = 0.2;
-    // count = 0;
-    // while (ros::ok() && count < 30)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.linear.x = 0.0;
-    // pub.publish(vel_msg);
-
-
-
-    // // ---------------------- Backward after grab
-    // vel_msg.angular.z = 1.5;
-    // count = 0;
-    // while (ros::ok() && count < 12)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.angular.z = 0.0;
-    // pub.publish(vel_msg);
-
-    // system("roslaunch clean_desktop_robot arm_put.launch");
-
-
 
 
     // ---------------------- Goal 1 (Place)
@@ -304,8 +262,6 @@ int main(int argc, char **argv)
         pub.publish(vel_msg);
         system("roslaunch clean_desktop_robot arm_put.launch");
     }
-
-
 
     vel_msg.linear.x = -0.3;
     count = 0;
@@ -345,7 +301,7 @@ int main(int argc, char **argv)
         count = 0;
         while (ros::ok())
         {
-            if (tag_x >= 0.29)  //0.29
+            if (tag_x >= 0.35)  //0.29
 		{
 			pub.publish(vel_msg);
 			loop_rate.sleep();
@@ -405,16 +361,16 @@ int main(int argc, char **argv)
 
 
 
-    // vel_msg.linear.x = -0.3;
-    // count = 0;
-    // while (ros::ok() && count < 14)
-    // {
-    //     pub.publish(vel_msg);
-    //     loop_rate.sleep();
-    //     count++;
-    // }
-    // vel_msg.linear.x = 0.0;
-    // pub.publish(vel_msg);
+    vel_msg.linear.x = -0.3;
+    count = 0;
+    while (ros::ok() && count < 14)
+    {
+        pub.publish(vel_msg);
+        loop_rate.sleep();
+        count++;
+    }
+    vel_msg.linear.x = 0.0;
+    pub.publish(vel_msg);
 
 
 

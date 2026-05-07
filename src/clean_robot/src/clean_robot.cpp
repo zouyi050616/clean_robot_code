@@ -35,10 +35,10 @@ void tagDetectionsCallback(const apriltag_ros::AprilTagDetectionArray::ConstPtr 
             // detect id 1，去点1
             tag = 1;
         }
-        else if (detection.id.size() == 1 && detection.id[0] == 2)
+        else if (detection.id.size() == 1 && detection.id[0] == 3)
         {
-            // detect id 2，去点2
-            tag = 2;
+            // detect id 3，去点3
+            tag = 3;
         }
     }
 }
@@ -355,7 +355,7 @@ int main(int argc, char **argv)
         }
     }
 
-    if (tag == 2)
+    if (tag == 3)
     {
         // 去点 3 弓字形路径的起始点（矩形右下角）
         goal2.target_pose.pose.position.x = start_x_3;
