@@ -408,9 +408,9 @@ int main(int argc, char **argv)
     // ---------------------- Goal 2 (Grab)
     goal.target_pose.pose.position.x = grab_2_x;
     goal.target_pose.pose.position.y = grab_2_y;
-    // Goal 2 grab heading: turn left 5 degrees from the original yaw=0 heading.
-    goal.target_pose.pose.orientation.z = 0.04362;
-    goal.target_pose.pose.orientation.w = 0.99905;
+    // Goal 2 grab heading: same as Goal 1.
+    goal.target_pose.pose.orientation.z = 0.0;
+    goal.target_pose.pose.orientation.w = 1.0;
     goal.target_pose.header.stamp = ros::Time::now();
 
     ac.sendGoal(goal);
@@ -522,7 +522,7 @@ int main(int argc, char **argv)
     // ---------------------- Backward after grab
     vel_msg.linear.x = 0.2;
     count = 0;
-    while (ros::ok() && count < 30)
+    while (ros::ok() && count < 28)
     {
         pub.publish(vel_msg);
         loop_rate.sleep();
@@ -536,7 +536,7 @@ int main(int argc, char **argv)
     // ---------------------- Backward after grab
     vel_msg.angular.z = -1.5;
     count = 0;
-    while (ros::ok() && count < 11)
+    while (ros::ok() && count < 12)
     {
         pub.publish(vel_msg);
         loop_rate.sleep();
@@ -549,7 +549,7 @@ int main(int argc, char **argv)
    // ---------------------- Backward after grab
     vel_msg.linear.x = 0.15;
     count = 0;
-    while (ros::ok() && count < 10)
+    while (ros::ok() && count < 12)
     {
         pub.publish(vel_msg);
         loop_rate.sleep();
@@ -599,7 +599,7 @@ int main(int argc, char **argv)
 
     vel_msg.linear.x = -0.5;
     count = 0;
-    while (ros::ok() && count < 30)    //50
+    while (ros::ok() && count < 20)    //50
     {
         pub.publish(vel_msg);
         loop_rate.sleep();
@@ -664,13 +664,13 @@ int main(int argc, char **argv)
     goal.target_pose.header.stamp = ros::Time::now();
 
     // Return-only blind navigation: disable local laser obstacles before entering the wall-side start area.
-    setReturnLocalObstacleBlindMode(nh, true);
+    // setReturnLocalObstacleBlindMode(nh, true);
 
     ac.sendGoal(goal);
     ROS_INFO("Send Goal Home 2 !!!");
     ac.waitForResult();
 
-    setReturnLocalObstacleBlindMode(nh, false);
+    // setReturnLocalObstacleBlindMode(nh, false);
 
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {

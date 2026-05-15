@@ -4,3 +4,4 @@
 /build/*
 /src/.vscode/*
 .catkin_workspace
+.DS_Store

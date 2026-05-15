@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 
     // 第三步，闭合夹爪
     arm_grab_client.call(empty_srv);
-    sleep(1.0);  //3.0
+    sleep(1.5);  //3.0
 
     // 第四步，返回零位
     arm_zero_client.call(empty_srv);
