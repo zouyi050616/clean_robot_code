@@ -1,18 +1,50 @@
 <launch>
     <node name="complete_flow_node" pkg="clean_desktop_robot" type="complete_flow_node" output="screen">
         <!-- 第一张桌子前方的导航点x坐标 -->
-        <param name="grab_1_x" value="2.2"/>
+        <param name="grab_1_x" value="2.280221"/>
         <!-- 第一张桌子前方的导航点y坐标 -->
-        <param name="grab_1_y" value="2.28"/>
+        <param name="grab_1_y" value="0.224379"/>
 
         <!-- 第二张桌子前方的导航点x坐标 -->
-        <param name="grab_2_x" value="2.15"/>
+        <param name="grab_2_x" value="2.366005"/>
         <!-- 第二张桌子前方的导航点y坐标 -->
-        <param name="grab_2_y" value="0.28"/>
+        <param name="grab_2_y" value="2.173078"/>
         
         <!-- 放置点相对于抓取点的左侧偏移量，单位为米 -->
         <param name="offset_left" value="0.49"/>
         <!-- 放置点相对于抓取点的右侧偏移量，单位为米 -->
         <param name="offset_right" value="0.5"/>
+
+        <!-- 抓取后快速投放策略；设为 false 可恢复原来的垃圾桶投放动作 -->
+        <param name="use_quick_dump_strategy" value="true"/>
+        <param name="quick_dump_turn_angle_deg" value="88.0"/>
+        <param name="quick_dump_forward_dist_m" value="0.30"/>
+        <param name="quick_dump_linear_vel" value="0.18"/>
+        <param name="quick_dump_angular_vel" value="1.2"/>
+        <param name="quick_dump_rotate_timeout_margin_sec" value="4.0"/>
+        <param name="quick_dump_min_angular_vel" value="0.12"/>
+        <!-- 回修阶段需要更高的最低角速度，避免电机扭矩不足原地不动 -->
+        <param name="quick_dump_fine_min_angular_vel" value="0.28"/>
+        <param name="quick_dump_slowdown_angle_deg" value="30.0"/>
+        <!-- 旋转目标 88 度；85~90 度认为可投放，超过 90 度才回修 -->
+        <param name="quick_dump_rotate_tolerance_deg" value="3.0"/>
+        <param name="quick_dump_rotate_overshoot_tolerance_deg" value="2.0"/>
+        <param name="quick_dump_fine_tune_timeout_sec" value="12.0"/>
+        <param name="quick_dump_fine_pulse_sec" value="0.12"/>
+        <param name="quick_dump_fine_settle_sec" value="0.25"/>
+        <!-- 投放时重复发开夹爪命令，避免偶发一次服务返回成功但实体未开到位 -->
+        <param name="quick_dump_release_repeat" value="2"/>
+        <param name="quick_dump_release_pause_sec" value="0.25"/>
+        <!-- 保留旧参数名但当前快速策略不再使用 z 小抬升，改用下方平举姿态 -->
+        <param name="quick_lift_height" value="0.05"/>
+        <param name="quick_dump_arm_yaw_compensation" value="true"/>
+
+        <!-- 快速投放时，抓取后机械臂直接切到平举保持姿态；1号底座舵机不在这里重置 -->
+        <param name="quick_flat_arm_servo_2" value="-800"/>
+        <param name="quick_flat_arm_servo_3" value="0"/>
+        <param name="quick_flat_arm_servo_4" value="0"/>
+        <param name="quick_flat_arm_servo_5" value="0"/>
+        <param name="quick_flat_arm_claw_angle" value="-400"/>
+        <param name="quick_flat_arm_speed" value="120"/>
     </node>
 </launch>
